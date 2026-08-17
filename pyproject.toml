@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "viva-casebook"
+version = "0.1.0"
+description = "A casebook of capability-testing investigations for the vivarium model-building framework."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "process-bigraph",
+  # the model-building framework (loop_state, module_sourcing, test_audit,
+  # benchmark) the investigations exercise:
+  "viva-superpowers",
+  # reused modules the model-sourcing investigation inherits into build_core.
+  # Several resolve from the vivarium-collective ecosystem rather than PyPI;
+  # see README. viva-cpm ships as the `pbg-cpm` dist (imports as `cpm`).
+  "viva-munk",
+  "spatio-flux",
+  "pbg-cpm",
+  "numpy",
+  "pyyaml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["viva_casebook"]

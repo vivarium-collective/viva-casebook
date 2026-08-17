@@ -1,0 +1,20 @@
+schema_version: 2
+name: casebook
+created: "2026-08-17"
+package_path: viva_casebook
+
+# Directory layout — research directories under workspace/, machine state under
+# .pbg/ (like .git/). Tooling resolves these via the WorkspacePaths resolver.
+layout:
+  studies: workspace/studies
+  investigations: workspace/investigations
+  composites: workspace/composites
+  references: workspace/references
+  datasets: workspace/datasets
+  reports: workspace/reports
+
+# Populated by the dashboard / skills as the workspace is worked.
+observables: []
+visualizations: []
+simulations: []
+datasets: []
