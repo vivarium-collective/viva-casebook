@@ -5,7 +5,8 @@ investigations** for the vivarium model-building framework: studies whose object
 evaluation is the framework's *own* ability to build models well, kept separate from
 any single paper or model.
 
-> 📊 **Full visual report:** the [capability-testing status page](https://vivarium-collective.github.io/viva-casebook/) · source in [`docs/status.html`](docs/status.html)
+> 🔁 **Flagship report — [the study-automation pipeline, end to end](https://vivarium-collective.github.io/viva-casebook/)**: one study driven through the whole model-building loop — contract → draft → tests → sufficiency audit → the *real, emergent* iteration trajectory from an inert draft to a model passing every test ([`docs/pipeline-report.html`](docs/pipeline-report.html)).
+> 📊 Also: the [model-sourcing scorecard](docs/status.html).
 
 The framework itself lives in
 [viva-superpowers](https://github.com/vivarium-collective/viva-superpowers)
