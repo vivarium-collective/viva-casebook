@@ -147,10 +147,15 @@ $('s-contract').innerHTML=secH("01","The contract","the prompt for the model we 
    <div class="meta">${D.contract.observables.map(o=>`<span class="chip">${o}</span>`).join("")}
    <span class="chip ghost">success = ${D.contract.success}</span></div></div>`;
 
+// composite renderer — the real process-bigraph model
+const compo=(c)=>`<div style="margin-top:12px"><div style="font-size:12px;color:var(--soft);margin-bottom:6px"><code>${c.engine}</code> · stores: ${c.stores.map(s=>`<code>${s}</code>`).join(' ')}</div>
+  <div class="scroll"><table><thead><tr><th>Process node</th><th>Address</th><th>reads</th><th>writes</th></tr></thead><tbody>${
+   c.processes.map(p=>`<tr><td class="mono"><b>${p.node}</b></td><td class="mono" style="font-size:11.5px;color:var(--soft)">${p.address}</td><td class="mono" style="font-size:11.5px">${p.reads.join(', ')}</td><td class="mono" style="font-size:11.5px">${p.writes.join(', ')}</td></tr>`).join("")}</tbody></table></div></div>`;
+
 // 2 draft
-$('s-draft').innerHTML=secH("02","The draft","typed ports, no mechanism")+
-  `<div class="panel"><p style="margin:0 0 10px;font-size:14px;color:var(--soft)">${D.draft.description}</p>
-   <div class="meta">${D.draft.ports.map(p=>`<span class="chip">◦ ${p}</span>`).join("")}</div></div>`;
+$('s-draft').innerHTML=secH("02","The draft","a real composite, no mechanism processes yet")+
+  `<div class="panel"><p style="margin:0 0 6px;font-size:14px;color:var(--soft)">${D.draft.description}</p>
+   ${compo(D.draft.composite)}</div>`;
 
 // 3 select
 $('s-select').innerHTML=secH("03","Sourcing (SELECT)","where the model comes from")+
@@ -235,7 +240,8 @@ $('s-result').innerHTML=secH("08","The result","tests passing — the model is b
    </div>
    <div class="panel" style="margin-top:12px"><div style="font-size:12.5px;color:var(--soft);margin-bottom:6px">Final built model — real units; the dashed line is where temperature crosses the calibrated tolerance (t_tol = ${D.timeseries.t_tol} °C). The <b style="color:var(--bad)">faint red</b> curve is iteration 3's mis-calibrated viability (collapsed early) — the regression, drawn.</div>
      <canvas id="chart" width="900" height="270"></canvas>
-     <div class="legend"><span><i style="background:var(--teal)"></i>biomass</span><span><i style="background:var(--warn)"></i>nutrient</span><span><i style="background:var(--good)"></i>viability (final)</span><span><i style="background:var(--bad)"></i>viability (iter 3, regressed)</span><span><i style="background:var(--soft)"></i>temperature</span></div></div>`;
+     <div class="legend"><span><i style="background:var(--teal)"></i>biomass</span><span><i style="background:var(--warn)"></i>nutrient</span><span><i style="background:var(--good)"></i>viability (final)</span><span><i style="background:var(--bad)"></i>viability (iter 3, regressed)</span><span><i style="background:var(--soft)"></i>temperature</span></div></div>
+   <div class="panel" style="margin-top:12px"><div style="font-size:12.5px;color:var(--soft);margin-bottom:2px"><b>The built model is a real process-bigraph composite</b> — the loop assembled it by installing these Process nodes; the dynamics above came from running it through the engine, not an inline integrator.</div>${compo(D.final_composite)}</div>`;
 
 // 9 give-up companion
 const G=D.giveup_companion;

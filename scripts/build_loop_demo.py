@@ -24,8 +24,19 @@ import json
 import os
 
 import numpy as np
+from process_bigraph import Composite
 
+import viva_casebook.core as _vc_core
 from viva_superpowers import loop_state as ls, test_contract as tc, test_audit
+
+_CORE = None
+
+
+def _core():
+    global _CORE
+    if _CORE is None:
+        _CORE = _vc_core.build_core()
+    return _CORE
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.abspath(os.path.join(HERE, os.pardir))
@@ -61,26 +72,40 @@ N0, X0 = 10.0, 0.5             # mM glucose, gDW/L (toy scale)
 Y_REF = 0.45                   # the mass-balance reference yield the conservation test enforces
 
 
+def _node(addr, cfg, ins, outs, dt):
+    return {"_type": "process", "address": "local:" + addr, "config": cfg,
+            "inputs": ins, "outputs": outs, "interval": dt}
+
+
 def simulate(active, knobs, *, dt=DT):
-    t = np.arange(0.0, T_END + dt, dt)
-    n = len(t)
-    X = np.zeros(n); N = np.zeros(n); th = np.zeros(n)
-    temp = 37.0 + (50.0 - 37.0) * (t / T_END)      # ramp 37 → 50 °C
-    X[0], N[0], th[0] = X0, N0, 1.0
-    qmax = knobs.get("qmax", 3.0); Ks = knobs.get("Ks", 0.02)
-    Y = knobs.get("Y", 0.45); t_tol = knobs.get("t_tol"); k_death = knobs.get("k_death", 0.8)
-    for i in range(1, n):
-        # specific uptake q (per biomass) × biomass X = total uptake (Monod, biomass-coupled)
-        q = (qmax * N[i-1] / (Ks + N[i-1])) if ("monod_uptake" in active and N[i-1] > 0) else 0.0
-        uptake = q * X[i-1]
-        grow = (Y * uptake) if "yield_growth" in active else 0.0
-        X[i] = X[i-1] + grow * dt
-        N[i] = max(0.0, N[i-1] - uptake * dt)
-        if "thermal_death" in active and t_tol is not None:
-            th[i] = max(0.0, th[i-1] - k_death * max(0.0, temp[i-1] - t_tol) * th[i-1] * dt)
-        else:
-            th[i] = th[i-1]
-    return {"t": t, "biomass": X, "nutrient": N, "viability": th, "temperature": temp, "Y": Y}
+    """Build the REAL process-bigraph Composite for the installed mechanisms and
+    run it through the engine, sampling the observable stores each step.
+    "Install a mechanism" == add its Process node; the model IS a pbg composite."""
+    core = _core()
+    st = {"nutrient": N0, "biomass": X0, "viability": 1.0, "temperature": 37.0, "uptake_flux": 0.0,
+          "ramp": _node("TemperatureRamp", {"t_start": 37.0, "t_end": 50.0, "duration": T_END},
+                        {"temperature": ["temperature"]}, {"temperature": ["temperature"]}, dt)}
+    if "monod_uptake" in active:
+        st["monod"] = _node("MonodUptake", {"qmax": knobs.get("qmax", 3.0), "Ks": knobs.get("Ks", 0.02)},
+                            {"nutrient": ["nutrient"], "biomass": ["biomass"], "uptake_flux": ["uptake_flux"]},
+                            {"nutrient": ["nutrient"], "uptake_flux": ["uptake_flux"]}, dt)
+    if "yield_growth" in active:
+        st["growth"] = _node("YieldGrowth", {"Y": knobs.get("Y", 0.45)},
+                             {"uptake_flux": ["uptake_flux"]}, {"biomass": ["biomass"]}, dt)
+    if "thermal_death" in active:
+        st["thermal"] = _node("ThermalDeath", {"t_tol": knobs.get("t_tol", 35.0), "k_death": knobs.get("k_death", 0.8)},
+                             {"temperature": ["temperature"], "viability": ["viability"]},
+                             {"viability": ["viability"]}, dt)
+    sim = Composite({"state": st}, core=core)
+    n = int(round(T_END / dt))
+    bm, nu, vi, te = [], [], [], []
+    for _i in range(n + 1):
+        bm.append(float(sim.state.get("biomass", 0.0))); nu.append(float(sim.state.get("nutrient", 0.0)))
+        vi.append(float(sim.state.get("viability", 0.0))); te.append(float(sim.state.get("temperature", 0.0)))
+        sim.run(dt)
+    t = np.array([i * dt for i in range(n + 1)])
+    return {"t": t, "biomass": np.array(bm), "nutrient": np.array(nu),
+            "viability": np.array(vi), "temperature": np.array(te), "Y": knobs.get("Y", 0.45)}
 
 
 def observe(name, out):
@@ -141,6 +166,25 @@ def expected_str(t):
     e = t["expected"]
     sym = {">=": "≥", "<=": "≤", "==": "="}
     return f"∈ [{e.low}, {e.high}]" if e.kind == "band" else f"{sym.get(e.op, e.op)} {e.value}"
+
+
+_PROC_ADDR = {"monod_uptake": "MonodUptake", "yield_growth": "YieldGrowth", "thermal_death": "ThermalDeath"}
+_PROC_WIRE = {
+    "monod_uptake": {"reads": ["nutrient", "biomass"], "writes": ["nutrient", "uptake_flux"]},
+    "yield_growth": {"reads": ["uptake_flux"], "writes": ["biomass"]},
+    "thermal_death": {"reads": ["temperature", "viability"], "writes": ["viability"]},
+}
+
+
+def describe_composite(active):
+    """The real pbg composite structure for a set of installed mechanisms."""
+    procs = [{"node": "ramp", "address": "local:TemperatureRamp", "reads": ["temperature"], "writes": ["temperature"]}]
+    for m in ("monod_uptake", "yield_growth", "thermal_death"):
+        if m in active:
+            procs.append({"node": m, "address": "local:" + _PROC_ADDR[m], **_PROC_WIRE[m]})
+    return {"engine": "process_bigraph.Composite",
+            "stores": ["nutrient (mM)", "biomass (gDW/L)", "viability", "temperature (°C)", "uptake_flux"],
+            "processes": procs}
 
 
 QUESTION = ("Build a bounded, goal-directed cell: on a finite nutrient pool and a rising "
@@ -320,9 +364,12 @@ def main():
         "contract": {"question": QUESTION,
                      "observables": ["biomass (gDW/L)", "nutrient (mM glucose)", "viability", "temperature (°C, driven)"],
                      "success": "all 5 hard acceptance tests pass; 1 directional test rides along"},
-        "draft": {"description": "Typed exchange ports declared with no mechanism behind them — the inert "
-                                 "starting point the loop must compile into a running cell.",
-                  "ports": ["biomass", "nutrient", "viability", "temperature (driven)"]},
+        "draft": {"description": "A real process-bigraph composite with the exchange stores and the "
+                                 "temperature driver, but NO mechanism processes behind the ports — the "
+                                 "inert starting point the loop compiles into a running cell.",
+                  "ports": ["biomass", "nutrient", "viability", "temperature (driven)"],
+                  "composite": describe_composite(set())},
+        "final_composite": describe_composite(final_active),
         "select": {"decision": "build-new", "rationale": "no catalogued module implements a bounded, goal-directed cell",
                    "library": [{"mechanism": m, "knobs": list(v["knobs"]), "cite": v["cite"]} for m, v in LIBRARY.items()]},
         "audit": {"round1_gate": gate1, "round2_gate": gate2,

@@ -12,12 +12,89 @@
     "success": "all 5 hard acceptance tests pass; 1 directional test rides along"
   },
   "draft": {
-    "description": "Typed exchange ports declared with no mechanism behind them \u2014 the inert starting point the loop must compile into a running cell.",
+    "description": "A real process-bigraph composite with the exchange stores and the temperature driver, but NO mechanism processes behind the ports \u2014 the inert starting point the loop compiles into a running cell.",
     "ports": [
       "biomass",
       "nutrient",
       "viability",
       "temperature (driven)"
+    ],
+    "composite": {
+      "engine": "process_bigraph.Composite",
+      "stores": [
+        "nutrient (mM)",
+        "biomass (gDW/L)",
+        "viability",
+        "temperature (\u00b0C)",
+        "uptake_flux"
+      ],
+      "processes": [
+        {
+          "node": "ramp",
+          "address": "local:TemperatureRamp",
+          "reads": [
+            "temperature"
+          ],
+          "writes": [
+            "temperature"
+          ]
+        }
+      ]
+    }
+  },
+  "final_composite": {
+    "engine": "process_bigraph.Composite",
+    "stores": [
+      "nutrient (mM)",
+      "biomass (gDW/L)",
+      "viability",
+      "temperature (\u00b0C)",
+      "uptake_flux"
+    ],
+    "processes": [
+      {
+        "node": "ramp",
+        "address": "local:TemperatureRamp",
+        "reads": [
+          "temperature"
+        ],
+        "writes": [
+          "temperature"
+        ]
+      },
+      {
+        "node": "monod_uptake",
+        "address": "local:MonodUptake",
+        "reads": [
+          "nutrient",
+          "biomass"
+        ],
+        "writes": [
+          "nutrient",
+          "uptake_flux"
+        ]
+      },
+      {
+        "node": "yield_growth",
+        "address": "local:YieldGrowth",
+        "reads": [
+          "uptake_flux"
+        ],
+        "writes": [
+          "biomass"
+        ]
+      },
+      {
+        "node": "thermal_death",
+        "address": "local:ThermalDeath",
+        "reads": [
+          "temperature",
+          "viability"
+        ],
+        "writes": [
+          "viability"
+        ]
+      }
     ]
   },
   "select": {
@@ -395,9 +472,9 @@
           "label": "Cell grows well above seed, within the yield ceiling",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 5.0167,
+          "observed": 5.0575,
           "expected": "\u2208 [2.0, 5.5]",
-          "margin": 0.4833104061150406
+          "margin": 0.4424862952357387
         },
         {
           "id": "nutrient-depletion",
@@ -413,9 +490,9 @@
           "label": "Growth is paid for by nutrient (mass balance)",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 0.0167,
+          "observed": 0.0575,
           "expected": "\u2208 [-0.25, 0.25]",
-          "margin": 0.23331040611504061
+          "margin": 0.19248629523573868
         },
         {
           "id": "viability-cliff",
@@ -516,9 +593,9 @@
           "label": "Cell grows well above seed, within the yield ceiling",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 5.0167,
+          "observed": 5.0575,
           "expected": "\u2208 [2.0, 5.5]",
-          "margin": 0.4833104061150406
+          "margin": 0.4424862952357387
         },
         {
           "id": "nutrient-depletion",
@@ -534,9 +611,9 @@
           "label": "Growth is paid for by nutrient (mass balance)",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 0.0167,
+          "observed": 0.0575,
           "expected": "\u2208 [-0.25, 0.25]",
-          "margin": 0.23331040611504061
+          "margin": 0.19248629523573868
         },
         {
           "id": "viability-cliff",
@@ -545,7 +622,7 @@
           "verdict": "within_tol",
           "observed": 0.0,
           "expected": "\u2208 [0.0, 0.1]",
-          "margin": 1.7245911323610693e-26
+          "margin": 1.7245911323615078e-26
         },
         {
           "id": "viability-in-band",
@@ -641,9 +718,9 @@
           "label": "Cell grows well above seed, within the yield ceiling",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 5.0167,
+          "observed": 5.0575,
           "expected": "\u2208 [2.0, 5.5]",
-          "margin": 0.4833104061150406
+          "margin": 0.4424862952357387
         },
         {
           "id": "nutrient-depletion",
@@ -659,9 +736,9 @@
           "label": "Growth is paid for by nutrient (mass balance)",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 0.0167,
+          "observed": 0.0575,
           "expected": "\u2208 [-0.25, 0.25]",
-          "margin": 0.23331040611504061
+          "margin": 0.19248629523573868
         },
         {
           "id": "viability-cliff",
@@ -670,7 +747,7 @@
           "verdict": "within_tol",
           "observed": 0.0,
           "expected": "\u2208 [0.0, 0.1]",
-          "margin": 8.896599252380042e-16
+          "margin": 8.896599252382147e-16
         },
         {
           "id": "viability-in-band",
@@ -679,7 +756,7 @@
           "verdict": "mismatch",
           "observed": 0.0591,
           "expected": "\u2208 [0.9, 1.0]",
-          "margin": -0.8408692286611112
+          "margin": -0.8408692286611115
         },
         {
           "id": "saturation",
@@ -696,7 +773,7 @@
       "decision": {
         "kind": "calibrate",
         "test": "viability-in-band",
-        "margin": -0.8408692286611112,
+        "margin": -0.8408692286611115,
         "mechanism": "thermal_death",
         "knob": "t_tol",
         "from": 38.5,
@@ -762,9 +839,9 @@
           "label": "Cell grows well above seed, within the yield ceiling",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 5.0167,
+          "observed": 5.0575,
           "expected": "\u2208 [2.0, 5.5]",
-          "margin": 0.4833104061150406
+          "margin": 0.4424862952357387
         },
         {
           "id": "nutrient-depletion",
@@ -780,9 +857,9 @@
           "label": "Growth is paid for by nutrient (mass balance)",
           "severity": "hard",
           "verdict": "within_tol",
-          "observed": 0.0167,
+          "observed": 0.0575,
           "expected": "\u2208 [-0.25, 0.25]",
-          "margin": 0.23331040611504061
+          "margin": 0.19248629523573868
         },
         {
           "id": "viability-cliff",
@@ -791,7 +868,7 @@
           "verdict": "within_tol",
           "observed": 0.0,
           "expected": "\u2208 [0.0, 0.1]",
-          "margin": 7.511839946805708e-08
+          "margin": 7.511839946807402e-08
         },
         {
           "id": "viability-in-band",
@@ -1030,130 +1107,130 @@
     ],
     "biomass": [
       0.5,
-      0.5561,
-      0.6185,
-      0.6879,
-      0.7651,
-      0.851,
-      0.9464,
-      1.0526,
-      1.1707,
-      1.302,
-      1.4481,
-      1.6105,
-      1.7911,
-      1.9919,
-      2.2152,
-      2.4634,
-      2.7393,
-      3.0461,
-      3.3868,
-      3.7653,
-      4.185,
-      4.6486,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167,
-      5.0167
+      0.5408,
+      0.5999,
+      0.6654,
+      0.7381,
+      0.8187,
+      0.9081,
+      1.0072,
+      1.1172,
+      1.2392,
+      1.3746,
+      1.5246,
+      1.6911,
+      1.8756,
+      2.0803,
+      2.3073,
+      2.559,
+      2.838,
+      3.1473,
+      3.4899,
+      3.8694,
+      4.2889,
+      4.7501,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575,
+      5.0575
     ],
     "nutrient": [
       10.0,
-      9.8753,
-      9.7366,
-      9.5824,
-      9.4109,
-      9.2201,
-      9.0079,
-      8.772,
-      8.5096,
-      8.2177,
-      7.8932,
-      7.5323,
-      7.131,
-      6.6847,
-      6.1886,
-      5.6369,
-      5.0237,
-      4.3421,
-      3.5848,
-      2.7438,
-      1.811,
-      0.7808,
-      0.0,
+      9.8778,
+      9.7431,
+      9.5937,
+      9.4279,
+      9.2441,
+      9.0402,
+      8.814,
+      8.5632,
+      8.285,
+      7.9764,
+      7.6341,
+      7.2546,
+      6.8337,
+      6.3669,
+      5.8493,
+      5.2754,
+      4.6392,
+      3.9341,
+      3.1529,
+      2.288,
+      1.3325,
+      0.2871,
       0.0,
       0.0,
       0.0,
