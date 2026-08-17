@@ -1,0 +1,360 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "bounded-cell-agent",
+  "driver": "LLM agent (Claude Sonnet) \u2014 decisions reasoned live from graded verdicts",
+  "contract": "Build a bounded, goal-directed cell: on a finite nutrient pool and a rising temperature, produce a cell whose BIOMASS grows on the nutrient it CONSUMES (mass-conserving, Monod-saturating GROWTH), and whose VIABILITY holds while below its temperature tolerance then collapses once temperature exceeds it.",
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "knobs": {},
+      "n_pass": 2,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "monod_uptake",
+        "reasoning": "Growth and nutrient-depletion both require consuming nutrient via a Monod uptake flux before biomass conversion can happen, and monod_uptake is the upstream dependency yield_growth needs, so install it first."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "name": "growth",
+          "verdict": "mismatch",
+          "margin": -1.5,
+          "observed": 0.5,
+          "severity": "hard"
+        },
+        {
+          "name": "nutrient-depletion",
+          "verdict": "mismatch",
+          "margin": -9.9,
+          "observed": 10.0,
+          "severity": "hard"
+        },
+        {
+          "name": "conservation",
+          "verdict": "within_tol",
+          "margin": 0.25,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-cliff",
+          "verdict": "mismatch",
+          "margin": -0.9,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-in-band",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "saturation",
+          "verdict": "within_tol",
+          "margin": 0.1,
+          "observed": 1.0,
+          "severity": "directional"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "monod_uptake"
+      ],
+      "knobs": {
+        "qmax": 3.0,
+        "Ks": 0.02
+      },
+      "n_pass": 2,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "yield_growth",
+        "reasoning": "Conservation and growth are both failing because the uptake flux from monod_uptake has nowhere to go \u2014 yield_growth converts consumed nutrient into biomass, closing the mass balance."
+      },
+      "newly_fixed": [
+        "nutrient-depletion"
+      ],
+      "regressed": [
+        "conservation"
+      ],
+      "tests": [
+        {
+          "name": "growth",
+          "verdict": "mismatch",
+          "margin": -1.5,
+          "observed": 0.5,
+          "severity": "hard"
+        },
+        {
+          "name": "nutrient-depletion",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "conservation",
+          "verdict": "mismatch",
+          "margin": -4.25,
+          "observed": -4.5,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-cliff",
+          "verdict": "mismatch",
+          "margin": -0.9,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-in-band",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "saturation",
+          "verdict": "within_tol",
+          "margin": 0.1,
+          "observed": 1.0,
+          "severity": "directional"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "monod_uptake",
+        "yield_growth"
+      ],
+      "knobs": {
+        "qmax": 3.0,
+        "Ks": 0.02,
+        "Y": 0.45
+      },
+      "n_pass": 4,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "thermal_death",
+        "reasoning": "viability-cliff requires viability to collapse once temperature exceeds tolerance, which is exactly what thermal_death models and no mechanism for that is installed yet."
+      },
+      "newly_fixed": [
+        "growth",
+        "conservation"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "name": "growth",
+          "verdict": "within_tol",
+          "margin": 0.4425,
+          "observed": 5.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "nutrient-depletion",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "conservation",
+          "verdict": "within_tol",
+          "margin": 0.1925,
+          "observed": 0.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-cliff",
+          "verdict": "mismatch",
+          "margin": -0.9,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-in-band",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "saturation",
+          "verdict": "within_tol",
+          "margin": 0.1,
+          "observed": 1.0,
+          "severity": "directional"
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "monod_uptake",
+        "thermal_death",
+        "yield_growth"
+      ],
+      "knobs": {
+        "qmax": 3.0,
+        "Ks": 0.02,
+        "Y": 0.45,
+        "t_tol": 35.0,
+        "k_death": 0.8
+      },
+      "n_pass": 4,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "calibrate",
+        "knob": "t_tol",
+        "value": 43.0,
+        "reasoning": "t_tol=35 is below the starting temperature so decay starts at t=0 and kills viability before t=3h; raising t_tol above the t=3h temperature (~42 \u00b0C) delays onset past the in-band checkpoint while still collapsing viability before the 50 \u00b0C peak."
+      },
+      "newly_fixed": [
+        "viability-cliff"
+      ],
+      "regressed": [
+        "viability-in-band"
+      ],
+      "tests": [
+        {
+          "name": "growth",
+          "verdict": "within_tol",
+          "margin": 0.4425,
+          "observed": 5.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "nutrient-depletion",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "conservation",
+          "verdict": "within_tol",
+          "margin": 0.1925,
+          "observed": 0.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-cliff",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-in-band",
+          "verdict": "mismatch",
+          "margin": -0.9,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "saturation",
+          "verdict": "within_tol",
+          "margin": 0.1,
+          "observed": 1.0,
+          "severity": "directional"
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "active": [
+        "monod_uptake",
+        "thermal_death",
+        "yield_growth"
+      ],
+      "knobs": {
+        "qmax": 3.0,
+        "Ks": 0.02,
+        "Y": 0.45,
+        "t_tol": 43.0,
+        "k_death": 0.8
+      },
+      "n_pass": 5,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "All five hard tests read within_tol \u2014 the model is built; report DONE rather than edit further."
+      },
+      "newly_fixed": [
+        "viability-in-band"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "name": "growth",
+          "verdict": "within_tol",
+          "margin": 0.4425,
+          "observed": 5.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "nutrient-depletion",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "conservation",
+          "verdict": "within_tol",
+          "margin": 0.1925,
+          "observed": 0.0575,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-cliff",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 0.0,
+          "severity": "hard"
+        },
+        {
+          "name": "viability-in-band",
+          "verdict": "within_tol",
+          "margin": 0.0,
+          "observed": 1.0,
+          "severity": "hard"
+        },
+        {
+          "name": "saturation",
+          "verdict": "within_tol",
+          "margin": 0.1,
+          "observed": 1.0,
+          "severity": "directional"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits_to_pass": 4,
+    "violations": [],
+    "final_knobs": {
+      "qmax": 3.0,
+      "Ks": 0.02,
+      "Y": 0.45,
+      "t_tol": 43.0,
+      "k_death": 0.8
+    }
+  },
+  "vs_deterministic": {
+    "agent_edits": 4,
+    "policy_edits": 5,
+    "note": "the agent reached a full pass in 4 edits vs the deterministic policy's 5 \u2014 it computed the thermal tolerance in one calibration step (t_tol=43) instead of two blind steps (35\u219238.5\u219242)."
+  }
+}
