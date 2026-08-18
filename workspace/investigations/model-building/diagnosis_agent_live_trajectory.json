@@ -1,0 +1,128 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "diagnosis",
+  "driver": "LLM agent \u2014 LIVE (claude-sonnet-4-5 (live)), reasoned each build from the env verdicts",
+  "contract": "A cell's biomass is far below target. Diagnose the cause from the observables and add the mechanism that fixes it, so the cell both grows (biomass >= 3.0) and stays alive (viability >= 0.5).",
+  "tests": [
+    {
+      "id": "growth",
+      "label": "growth",
+      "expected": "within_tol"
+    },
+    {
+      "id": "survives",
+      "label": "survives",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "install",
+        "reasoning": "Biomass far below target; boost_yield raises biomass yield per nutrient, the most direct lever on growth, try first."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": -1.886,
+          "expected": "within_tol",
+          "margin": -1.886,
+          "severity": "hard"
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": -0.5,
+          "expected": "within_tol",
+          "margin": -0.5,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "boost_yield"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "install",
+        "reasoning": "boost_yield still failed with viability_final=0.0 though nutrient fully consumed \u2014 the cell was dying mid-run, capping biomass regardless of yield. That is a viability/membrane problem, not uptake/yield. Swap to stabilize_membrane."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": -1.23,
+          "expected": "within_tol",
+          "margin": -1.23,
+          "severity": "hard"
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": -0.5,
+          "expected": "within_tol",
+          "margin": -0.5,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "stabilize_membrane"
+      ],
+      "n_pass": 2,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "Low biomass was a symptom of the cell dying (viability\u21920), not insufficient uptake/yield; correct minimal fix is stabilize_membrane alone."
+      },
+      "newly_fixed": [
+        "growth",
+        "survives"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "within_tol",
+          "observed": 1.5,
+          "expected": "within_tol",
+          "margin": 1.5,
+          "severity": "hard"
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "within_tol",
+          "observed": 0.5,
+          "expected": "within_tol",
+          "margin": 0.5,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 2,
+    "violations": []
+  }
+}

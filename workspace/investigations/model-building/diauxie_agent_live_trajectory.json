@@ -1,0 +1,196 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "diauxie",
+  "driver": "LLM agent \u2014 LIVE (claude-sonnet-4-5 (live)), reasoned each build from the env verdicts",
+  "contract": "Build a cell that grows on a mixture of glucose and lactose with the DIAUXIC phenotype: it consumes glucose first, and only once glucose is exhausted does it switch to lactose \u2014 a sequential shift, not simultaneous co-consumption.",
+  "tests": [
+    {
+      "id": "glucose-consumed",
+      "label": "glucose-consumed",
+      "expected": "within_tol"
+    },
+    {
+      "id": "lactose-consumed",
+      "label": "lactose-consumed",
+      "expected": "within_tol"
+    },
+    {
+      "id": "growth",
+      "label": "growth",
+      "expected": "within_tol"
+    },
+    {
+      "id": "diauxic-order",
+      "label": "diauxic-order",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 1,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "reasoning": "Start minimal with just glucose uptake to establish a baseline and see which tests are already satisfied versus which require lactose metabolism."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "glucose-consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "lactose-consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 0.5,
+          "expected": "\u2265 8.0",
+          "margin": -7.5,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "diauxic-order",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "glucose_uptake"
+      ],
+      "n_pass": 2,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "reasoning": "Baseline showed lactose never consumed and growth insufficient (only glucose contributed biomass). lactose_uptake lets the cell consume lactose; but its rate is gated by lac_repression, which only catabolite_repression writes (from glucose via a Hill switch) to enforce the diauxic sequential shift. Install all three."
+      },
+      "newly_fixed": [
+        "glucose-consumed"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "glucose-consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "lactose-consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 5.0,
+          "expected": "\u2265 8.0",
+          "margin": -3.0000000000000044,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "diauxic-order",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "catabolite_repression",
+        "glucose_uptake",
+        "lactose_uptake"
+      ],
+      "n_pass": 4,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "Required combining Monod uptake for glucose and lactose with a catabolite-repression Hill switch gating lactose uptake via lac_repression, so glucose is consumed first."
+      },
+      "newly_fixed": [
+        "lactose-consumed",
+        "growth"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "glucose-consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "lactose-consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "within_tol",
+          "observed": 9.5,
+          "expected": "\u2265 8.0",
+          "margin": 1.500000000000007,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "diauxic-order",
+          "verdict": "within_tol",
+          "observed": 9.129,
+          "expected": "\u2265 7.0",
+          "margin": 2.129216234945888,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 2,
+    "violations": []
+  }
+}
