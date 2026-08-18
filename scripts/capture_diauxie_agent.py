@@ -38,7 +38,8 @@ def main():
         states.append(set(active))
 
     st = ls.create(D.ROOT, "diauxie-agent", D.QUESTION, max_iterations=12)
-    st = ls.lock_tests(st, [{"name": t[0], "pass_if": {"op": t[2].op, "value": t[2].value}} for t in D.TESTS])
+    _locked = [{"name": t[0], "pass_if": {"op": t[2].op, "value": t[2].value}} for t in D.TESTS]
+    st = ls.lock_tests(st, _locked)
 
     iterations, prev = [], {}
     for i, act in enumerate(states):
@@ -71,7 +72,7 @@ def main():
             "contract": D.QUESTION,
             "tests": [{"id": t[0], "label": t[1], "expected": D.exp_str(t[0]), "provenance": t[3]} for t in D.TESTS],
             "iterations": iterations,
-            "result": {"state": st["state"], "edits": len(DECISIONS), "violations": ls.validate(st, [])}}
+            "result": {"state": st["state"], "edits": len(DECISIONS), "violations": ls.validate(st, _locked)}}
     with open(os.path.join(OUT, "diauxie_agent_trajectory.json"), "w") as fh:
         json.dump(traj, fh, indent=2)
     print("LLM-AGENT on diauxie:")

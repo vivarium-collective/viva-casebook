@@ -136,12 +136,14 @@ const abbr={"growth":"grow","nutrient-depletion":"nutr","conservation":"cons","v
 function scoreRow(label, a, p, awin){
   return `<tr><td class="metric">${label}</td><td class="${awin===true?'win':''}">${a}</td><td class="${awin===false?'win':''}">${p}</td></tr>`;
 }
+// count regressions actually observed in each trajectory (no hardcoding)
+function regCount(run){ return (run.iters||[]).reduce(function(n,it){ return n+((it.regressed||[]).length); },0); }
 $('score').innerHTML=[
   scoreRow('Driver', A.driver, P.driver, null),
   scoreRow('Result', A.state, P.state, null),
   scoreRow('Edits to a passing model', A.edits, P.edits, A.edits<P.edits),
-  scoreRow('Calibration steps for the tolerance', A.calibrations+' (computed t_tol in one shot)', P.calibrations+' (blind fixed steps)', A.calibrations<P.calibrations),
-  scoreRow('Regressions caught & recovered', '2', '2', null),
+  scoreRow('Calibration steps for the tolerance', A.calibrations, P.calibrations, A.calibrations<P.calibrations),
+  scoreRow('Regressions observed', regCount(A), regCount(P), null),
   scoreRow('Integrity violations', A.violations, P.violations, null),
 ].join("");
 

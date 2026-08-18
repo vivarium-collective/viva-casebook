@@ -255,8 +255,6 @@
   "result": {
     "state": "DONE",
     "edits": 3,
-    "violations": [
-      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
-    ]
+    "violations": []
   }
 }

@@ -30,7 +30,8 @@ def main():
         active = set(active); active.add(d["value"]); states.append(set(active))
 
     st = ls.create(T.ROOT, "sbml-agent", T.QUESTION, max_iterations=8)
-    st = ls.lock_tests(st, [{"name": t, "pass_if": {"op": ">=", "value": 1}} for t in T.TESTS])
+    _locked = [{"name": t, "pass_if": {"op": ">=", "value": 1}} for t in T.TESTS]
+    st = ls.lock_tests(st, _locked)
 
     iterations, prev = [], {}
     for i, act in enumerate(states):
@@ -61,7 +62,7 @@ def main():
             "contract": T.QUESTION,
             "tests": [{"id": t, "label": t, "expected": "within_tol"} for t in T.TESTS],
             "iterations": iterations,
-            "result": {"state": st["state"], "edits": len(DECISIONS), "violations": ls.validate(st, [])}}
+            "result": {"state": st["state"], "edits": len(DECISIONS), "violations": ls.validate(st, _locked)}}
     with open(os.path.join(OUT, "sbml_agent_trajectory.json"), "w") as fh:
         json.dump(traj, fh, indent=2)
     print("LLM-AGENT on SBML/COPASI task:")

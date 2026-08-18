@@ -40,8 +40,11 @@ def step(active, knobs):
 
 def library_card():
     """What the agent is allowed to install (invariant I3: provided mechanisms only)."""
+    # NOTE: deliberately does NOT expose B.TEST_MECH (the test→mechanism map).
+    # The agent gets a functional description of each mechanism + the contract,
+    # and must reason which mechanism a failing test needs — leaking the map
+    # would make the task multiple-choice with the answers printed on the card.
     return {"mechanisms": {m: {"knobs": v["knobs"], "cite": v["cite"]} for m, v in B.LIBRARY.items()},
-            "test_pulls_on": B.TEST_MECH,
             "contract": B.QUESTION}
 
 
