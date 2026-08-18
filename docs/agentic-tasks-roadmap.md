@@ -10,6 +10,31 @@ The discriminating property: for each task, the policy's action vocabulary
 (install the mechanism a failing test *names* / step a knob by the sign of its
 margin) has **no move** for the real fix.
 
+> ## ⚠️ Fair-baseline caveat (added 2026-08-18, from Fable's review)
+>
+> The "policy has no move" framing above is only honest against a **naive-map**
+> policy whose action map is hand-authored to *omit* the winning mechanism. A
+> fairer control — a **brute-force enumerating policy** that installs any
+> uninstalled library mechanism when stuck (`scripts/enumerating_baseline.py`,
+> run for real) — **solves all three small-library menu tasks in 3 edits each**,
+> because the winning mechanism is one of the ≤3 items in the library:
+>
+> ```
+> diauxie:   DONE in 3 edits (library of 3)
+> diagnosis: DONE in 3 edits (library of 3)
+> bistable:  DONE in 3 edits (library of 3)
+> ```
+>
+> So for tasks **2–4** the demonstration shows the LLM reasons *efficiently* (it
+> installs only the needed mechanism, without wasted edits) — **not** that an
+> agent is *required*; a dumb enumerator also reaches DONE. The "genuinely requires
+> an agent" thesis only holds where the real fix cannot be expressed as "install a
+> library item," and tasks **5–7** are themselves still small curated menus in the
+> current code. Making the necessity claim real needs the follow-on work: an
+> **open action space**, **live logged agent runs** (not replayed transcripts), and
+> **data-grounded tests**. Until then, read the head-to-heads as *efficiency and
+> reasoning-quality* comparisons on a shared substrate, not proof of necessity.
+
 | # | Task | Capability it uniquely requires | Real tooling | Feasibility | Status |
 |---|---|---|---|---|---|
 | 1 | **Bounded cell** | quantitative single-shot calibration | pbg composites | ready | ✅ done (LLM 4 edits vs policy 5) |
