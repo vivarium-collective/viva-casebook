@@ -1,0 +1,46 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "diauxie",
+  "model": "claude-sonnet-4-5 (live)",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py; scripts/run_agent.py runs the SAME environment through the Anthropic API for n>=5",
+  "runs": [
+    {
+      "run_index": 0,
+      "state": "DONE",
+      "edits": 2,
+      "n_steps": 2,
+      "steps": [
+        {
+          "active": [
+            "glucose_uptake"
+          ],
+          "n_pass": 2,
+          "n_hard": 4,
+          "all_pass": false,
+          "reasoning": "Start minimal with just glucose uptake to establish a baseline and see which tests are already satisfied versus which require lactose metabolism."
+        },
+        {
+          "active": [
+            "catabolite_repression",
+            "glucose_uptake",
+            "lactose_uptake"
+          ],
+          "n_pass": 4,
+          "n_hard": 4,
+          "all_pass": true,
+          "reasoning": "Baseline showed lactose never consumed and growth insufficient (only glucose contributed biomass). lactose_uptake lets the cell consume lactose; but its rate is gated by lac_repression, which only catabolite_repression writes (from glucose via a Hill switch) to enforce the diauxic sequential shift. Install all three."
+        }
+      ],
+      "final_note": "Required combining Monod uptake for glucose and lactose with a catabolite-repression Hill switch gating lactose uptake via lac_repression, so glucose is consumed first."
+    }
+  ],
+  "summary": {
+    "n_runs": 1,
+    "n_done": 1,
+    "pass_rate": 1.0,
+    "edits_when_done": [
+      2
+    ],
+    "note": "n=1 in-session; run scripts/run_agent.py --task diauxie --runs 5 with an API key for the full n>=5 distribution."
+  }
+}
