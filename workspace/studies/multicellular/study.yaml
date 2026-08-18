@@ -9,6 +9,10 @@ gate_status: passed
 confidence: Accepted
 question: 'Produce a multicellular tissue with a spatial differentiation gradient: cells near a signalling
   niche stay stem, distal cells differentiate.'
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.multicellular
+  params: {}
 behavior_tests:
 - name: simulator-fit
   classification: primary
@@ -34,13 +38,6 @@ behavior_tests:
   pass_if:
     op: ==
     value: within_tol
-baseline:
-- name: final-model
-  module: null
-  domain: 'A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the lattice,
-    a diffusing Wnt field, and a StemnessFate subcell reading each cell''s local Wnt to set its fate —
-    producing a spatial differentiation gradient.'
-  params: {}
 runs:
 - name: multicell-agent
   status: completed

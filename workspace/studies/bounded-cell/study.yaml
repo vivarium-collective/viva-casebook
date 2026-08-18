@@ -11,6 +11,10 @@ question: 'Build a bounded, goal-directed cell: on a finite nutrient pool and a 
   a cell whose BIOMASS grows on the nutrient it CONSUMES (mass-conserving, Monod-saturating GROWTH), and
   whose VIABILITY holds while below its temperature tolerance then collapses once temperature exceeds
   it.'
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.bounded-cell
+  params: {}
 behavior_tests:
 - name: growth
   classification: primary
@@ -60,12 +64,6 @@ behavior_tests:
   pass_if:
     op: ==
     value: within_tol
-baseline:
-- name: final-model
-  module: null
-  domain: 'A process-bigraph Composite: TemperatureRamp + MonodUptake + YieldGrowth + ThermalDeath (t_tol=43
-    °C), wired over stores biomass/nutrient/viability/temperature/uptake_flux.'
-  params: {}
 runs:
 - name: bounded-cell-agent
   status: completed

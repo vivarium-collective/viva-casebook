@@ -10,6 +10,10 @@ confidence: Accepted
 question: 'Build a cell that grows on a mixture of glucose and lactose with the DIAUXIC phenotype: it
   consumes glucose first, and only once glucose is exhausted does it switch to lactose — a sequential
   shift, not simultaneous co-consumption.'
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.diauxie
+  params: {}
 behavior_tests:
 - name: glucose-consumed
   classification: primary
@@ -43,13 +47,6 @@ behavior_tests:
   pass_if:
     op: ==
     value: within_tol
-baseline:
-- name: final-model
-  module: null
-  domain: 'A process-bigraph Composite: GlucoseUptake + LactoseUptake (gated by a lac_repression store)
-    + CataboliteRepression (Hill switch from glucose), over glucose/lactose/biomass/lac_repression. The
-    repression coupling enforces the sequential shift.'
-  params: {}
 runs:
 - name: diauxie-agent
   status: completed
