@@ -1,47 +1,85 @@
 {
-  "schema": "agent_live_runs/v1",
-  "task": "author-phase (question->AUTHOR->AUDIT->LOCK->BUILD)",
-  "model": "claude-sonnet-4-5 (live)",
-  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py author-tests",
-  "audit_is_executable": "the AUDIT runs degenerate null models (collapse-to-zero, blow-up, wrong-target) and checks the authored tests reject them \u2014 not a classification label or an LLM promise (Fable #5)",
+  "schema": "author_phase_demo/v1",
+  "task": "author-phase (question -> AUTHOR tests -> hardened AUDIT -> LOCK -> BUILD)",
+  "driver": "scripted deterministic demonstration of the audit/lock/build machinery \u2014 no LLM in this loop; every verdict is real output of scripts/author_tests_task.py",
+  "question": "Build a model where the store `X` (starting at 0) converges to a target value near 5 and stays BOUNDED \u2014 it must not collapse to 0, blow up without bound, or settle at the wrong value. First AUTHOR acceptance tests that capture this, get them audited, lock them, then build a Process that passes them.",
+  "observables": [
+    "final",
+    "max",
+    "min",
+    "mean"
+  ],
   "audit_catches_insufficiency_demo": {
     "naive_tests": [
       {
-        "name": "reaches",
-        "observable": "final",
-        "op": ">=",
-        "value": 4
-      }
-    ],
-    "audit_sufficient": false,
-    "degenerate_models_that_slip_through": [
-      "blow_up",
-      "wrong_target_100"
-    ],
-    "note": "A single lower-bound test lets blow-up and wrong-target models pass; the audit flags them, so it cannot be locked."
-  },
-  "live_full_cycle": {
-    "authored_tests": [
-      {
-        "name": "final_near_target_low",
+        "name": "final_low",
         "observable": "final",
         "op": ">=",
         "value": 4.5
       },
       {
-        "name": "final_near_target_high",
+        "name": "final_high",
         "observable": "final",
         "op": "<=",
         "value": 5.5
       }
     ],
+    "audit_sufficient": false,
+    "degenerate_models_that_slip_through": [
+      "spike_then_settle",
+      "dip_then_settle"
+    ],
+    "note": "A `final`-only band looks reasonable, but a model that spikes to 1e6 mid-run and settles to ~5 passes it while violating 'stays bounded'. The hardened audit RUNS that transient null (spike_then_settle) and flags it \u2014 so the suite cannot lock."
+  },
+  "full_cycle": {
+    "authored_tests": [
+      {
+        "name": "final_low",
+        "observable": "final",
+        "op": ">=",
+        "value": 4.5
+      },
+      {
+        "name": "final_high",
+        "observable": "final",
+        "op": "<=",
+        "value": 5.5
+      },
+      {
+        "name": "no_blowup",
+        "observable": "max",
+        "op": "<=",
+        "value": 5.5
+      },
+      {
+        "name": "no_negative_excursion",
+        "observable": "min",
+        "op": ">=",
+        "value": -0.5
+      }
+    ],
     "audit_sufficient": true,
     "locked": true,
+    "tests_hash": "6e00522c2c05644318440dfd9108463b910681acd1b48c4ad57e52b4e272e34f",
     "built_process": "RelaxationToTargetProcess \u2014 first-order relaxation dX=k*(target-X), cited",
     "build_all_pass": true,
-    "agent_reasoning": "Bracketed the target tightly on `final` (>=4.5 and <=5.5), which the audit confirmed excludes collapse-to-0 (fails lower), blow-up and wrong-target (fail upper). Locked, then authored a first-order relaxation Process that converges boundedly to 5 -> all_pass."
+    "n_pass": 4,
+    "n_hard": 4,
+    "observed": {
+      "final": 5.0,
+      "max": 5.0,
+      "min": 3.0,
+      "mean": 4.8889
+    },
+    "reasoning": "A final-only band is insufficient (the audit shows spike/dip nulls slip through), so the suite adds max<=5.5 (rejects transient blow-up) and min>=-0.5 (rejects a negative excursion). That bounded suite passes the audit; locked; a first-order relaxation Process then converges boundedly to 5 -> all tests pass."
+  },
+  "lock_enforced_demo": {
+    "tampered_locked_tests": true,
+    "build_refused": true,
+    "error": "LOCK INTEGRITY: the locked tests no longer match their pre-registration hash (recorded 6e00522c2c05\u2026, got 384ee8801e58\u2026). The lock was tampered with after pre-registration \u2014 refusing to grade.",
+    "note": "build() recomputes the canonical hash of the locked tests and refuses to grade when it no longer matches the pre-registered hash \u2014 the lock is enforced, not decorative."
   },
   "summary": {
-    "note": "The agent ran the full loop and authored SUFFICIENT tests first try (audit confirmed); the audit's catch capability is shown separately on a naive test. Lock is a real pre-registration (loop_state hash)."
+    "note": "The hardened audit now rejects the previously-'sufficient' final-only suite (Fable's counterexample), forces bounded tests, and the pre-registration hash is enforced at build time. Deterministic \u2014 reproduce with `python scripts/gen_author_tests_demo.py`."
   }
 }

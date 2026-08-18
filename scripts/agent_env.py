@@ -97,30 +97,45 @@ def main():
         raise SystemExit(__doc__)
     task, cmd = sys.argv[1], sys.argv[2]
 
-    # data-grounded BioModels break-and-repair suite: different action shape
-    # (repair a parameter) and observation (the divergence from the reference model).
-    # task is "repair" (default break) or "repair-<break_id>", e.g. repair-km.
+    # data-grounded break-and-repair suite, rebuilt on COPASI parameter estimation.
+    # The break id is OPAQUE (repair-01/02/03) — it does not name the parameter. The
+    # repair oracle is OPTIMIZATION (PE against the reference trace), not recall.
+    #   card      -> parameters + reference AND broken time-courses (divergence shown)
+    #   step {param,value}  -> manual repair, graded by rmsd vs reference
+    #   fit  [{candidates}] -> run COPASI PE to recover the parameter(s)
+    #   localize            -> recall-free baseline: PE fits all candidates; the one
+    #                          that must move is the diagnosed break
     if task.startswith("repair"):
         import biomodels_repair_task as R
-        break_id = task.split("-", 1)[1] if "-" in task else "hill"
+        break_id = task if task in R.BREAKS else "repair-01"
         if break_id not in R.BREAKS:
             raise SystemExit(f"unknown break {break_id!r}; choose from {sorted(R.BREAKS)}")
+
+        def _payload():
+            arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
+            return json.loads(arg) if arg.strip() else {}
         if cmd == "card":
             bs = R.broken_state(break_id)
-            out = {"contract": "A curated BioModels model (Elowitz 2000 repressilator) no longer "
-                   "reproduces its REFERENCE time-course because one kinetic parameter was changed. "
-                   "Diagnose which parameter is wrong and repair it — set it to a value that restores "
-                   "the reference behaviour (rmsd_vs_reference below tolerance). The reference model is "
-                   "the ground truth; there is no author-set band.",
-                   "parameters": bs["parameters"], "rmsd_vs_reference": bs["rmsd_vs_reference"],
-                   "how": "Call `step` with {\"param\": name, \"value\": number} to set a parameter and "
-                          "see the new rmsd_vs_reference (matched=true when it drops below tolerance)."}
+            out = {"contract": "A kinetic model no longer reproduces its REFERENCE time-course because one "
+                   "parameter was changed. Diagnose which and repair it so the model reproduces the "
+                   "reference (rmsd_vs_reference below tolerance). The reference trace is the ground "
+                   "truth — no canonical value or author-set band is given.",
+                   "parameters": bs["parameters"], "candidate_parameters": bs["candidate_parameters"],
+                   "reference_trace": bs["reference_trace"], "broken_trace": bs["broken_trace"],
+                   "rmsd_vs_reference": bs["rmsd_vs_reference"],
+                   "how": "Repair it three ways: `step` {\"param\":name,\"value\":n} sets a value manually; "
+                          "`fit` {\"candidates\":[names]} runs COPASI parameter estimation to recover the "
+                          "parameter(s) by fitting the reference; `localize` fits ALL candidates and reports "
+                          "which one had to move (the recall-free diagnosis)."}
         elif cmd == "step":
-            arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
-            req = json.loads(arg) if arg.strip() else {}
+            req = _payload()
             out = R.repair(break_id, req.get("param"), req.get("value"))
+        elif cmd == "fit":
+            out = R.fit(break_id, _payload().get("candidates"))
+        elif cmd == "localize":
+            out = R.localize(break_id)
         else:
-            raise SystemExit("use 'card' or 'step'")
+            raise SystemExit("use 'card' | 'step' | 'fit' | 'localize'")
         print(json.dumps(out, indent=2))
         return
 
@@ -135,14 +150,17 @@ def main():
             out = {"contract": AT.QUESTION, "observables": AT.OBSERVABLES,
                    "how": "1) AUTHOR tests: call `audit` with {\"tests\":[{\"name\":..,\"observable\":one of "
                           + str(AT.OBSERVABLES) + ",\"op\":\">=\"|\"<=\",\"value\":n}]}. The audit RUNS "
-                          "degenerate models (collapse-to-0, blow-up, wrong-target) and tells you which slip "
-                          "through — revise until sufficient. 2) `lock` the same tests (gated on the audit). "
-                          "3) `build` with {\"code\": <a Process, as in the author task>} — it is graded "
-                          "against your LOCKED tests."}
+                          "degenerate models — collapse-to-0, blow-up, wrong-target, and TRANSIENT nulls "
+                          "(spike-then-settle, dip-then-settle) that END near the target but blow up or go "
+                          "negative mid-run — and tells you which slip through. A `final`-only test is NOT "
+                          "enough; revise until none slip. 2) `lock` the same tests (audit-gated; the hash "
+                          "is pre-registered and build() re-verifies it). 3) `build` with {\"code\": <a "
+                          "Process, as in the author task>} — graded against your LOCKED tests."}
         elif cmd == "audit":
             out = AT.audit(_payload().get("tests"))
         elif cmd == "lock":
-            out = AT.lock(_payload().get("tests"))
+            p = _payload()
+            out = AT.lock(p.get("tests"), reopen=bool(p.get("reopen")))
         elif cmd == "build":
             out = AT.build(_payload().get("code", ""))
         else:

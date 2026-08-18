@@ -16,6 +16,14 @@ INV = os.path.join(ROOT, "workspace", "investigations", "model-building")
 HARD = ["growth", "nutrient-depletion", "conservation", "viability-cliff", "viability-in-band"]
 
 
+def _abbr(name):
+    """A short (≤6-char) strip label for a test id, derived generically."""
+    parts = str(name).replace("_", "-").split("-")
+    if len(parts) >= 2:
+        return (parts[0][:4] + parts[-1][:2]).lower()
+    return str(name)[:6].lower()
+
+
 def _iter_common(label, n_pass, n_hard, edit, reasoning, newly, regressed, tests):
     def nm(t):
         return t.get("name") or t.get("id")
@@ -38,7 +46,13 @@ def norm_agent(path):
                      it["n_pass"], it["n_hard"], edit, d.get("reasoning", ""),
                      it["newly_fixed"], it["regressed"], it["tests"]))
     calib = sum(1 for it in t["iterations"] if it["agent_decision"].get("action") == "calibrate")
-    return {"driver": "LLM agent (Claude Sonnet)",
+    prov = t.get("provenance", "illustrative")
+    # honour the trajectory's own driver string (live runs carry "LIVE (model), n=..");
+    # only fall back to a generic label for older hardcoded trajectories.
+    driver = t.get("driver") or "LLM agent (Claude Sonnet)"
+    return {"driver": driver if prov == "live" else "LLM agent (Claude Sonnet)",
+            "driver_full": driver, "provenance": prov, "n_runs": t.get("n_runs"),
+            "pass_rate": t.get("pass_rate"),
             "sub": "reasons each edit from the graded margins + a functional mechanism description",
             "edits": t["result"].get("edits_to_pass", t["result"].get("edits")), "state": t["result"]["state"],
             "violations": len(t["result"].get("violations", [])), "calibrations": calib, "iters": iters}
@@ -113,12 +127,15 @@ TEMPLATE = r"""<title>Agent vs Policy</title>
   .t-fx{background:var(--good-w);color:var(--good)} .t-rg{background:var(--bad-w);color:var(--bad)}
   .callout{border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:10px;padding:14px 16px;background:var(--panel);margin-top:16px;font-size:13.5px;color:var(--soft)}
   .callout b{color:var(--ink)}
+  .prov{margin-top:14px;font-size:12.5px;font-family:var(--mono);display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border-radius:999px;border:1px solid var(--line2)}
+  .prov.live{background:var(--good-w);color:var(--good)} .prov.illustrative{background:var(--warn-w);color:var(--warn)}
   .foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);font-family:var(--mono)}
 </style>
 <div class="wrap">
   <div class="eyebrow">Same study · same composite · different driver</div>
   <h1>__TITLE__</h1>
   <p class="lede">The exact same model-building study — same real process-bigraph composite, same locked tests, same mechanism library — built two ways. One driver is an actual LLM reasoning over the graded margins; the other is a hand-coded worst-negative-margin rule. Every verdict below is real engine output.</p>
+  <div class="prov" id="prov"></div>
   <h2>Scorecard</h2>
   <div class="score"><table><thead><tr><th>Metric</th><th>🤖 LLM agent</th><th>⚙️ Deterministic policy</th></tr></thead><tbody id="score"></tbody></table></div>
   <h2>The two builds, side by side</h2>
@@ -129,9 +146,9 @@ TEMPLATE = r"""<title>Agent vs Policy</title>
 <script>
 const A=__AGENT__, P=__POLICY__;
 const $=(id)=>document.getElementById(id);
-const HARD=["growth","nutrient-depletion","conservation","viability-cliff","viability-in-band"];
+const HARD=__HARD__;
 const vc=(v)=>v==='within_tol'?['var(--good-w)','var(--good)']:v==='mismatch'?['var(--bad-w)','var(--bad)']:['var(--warn-w)','var(--warn)'];
-const abbr={"growth":"grow","nutrient-depletion":"nutr","conservation":"cons","viability-cliff":"cliff","viability-in-band":"band"};
+const abbr=__ABBR__;
 
 function scoreRow(label, a, p, awin){
   return `<tr><td class="metric">${label}</td><td class="${awin===true?'win':''}">${a}</td><td class="${awin===false?'win':''}">${p}</td></tr>`;
@@ -167,7 +184,19 @@ $('col-agent').innerHTML=renderCol(A,'agent','reasoned');
 $('col-policy').innerHTML=renderCol(P,'policy','coded');
 
 $('insight').innerHTML=__INSIGHT__;
-$('foot').innerHTML='Agent decisions: real Claude Sonnet run via scripts/agent_step.py + capture_agent_run.py · policy: scripts/build_loop_demo.py · both on the same process-bigraph composite.';
+
+// provenance banner: honest about whether the agent column is a LIVE run or an illustrative transcript
+(function(){
+  var live = A.provenance==='live';
+  var p=$('prov'); p.className='prov '+(live?'live':'illustrative');
+  if(live){
+    p.innerHTML='● LIVE agent run · '+(A.driver_full||A.driver)+(A.pass_rate!=null?(' · pass-rate '+A.pass_rate):'')
+      +' · single-trajectory demonstration (n='+(A.n_runs||1)+')';
+  } else {
+    p.innerHTML='◐ Illustrative hand-authored transcript — not a live model run; a worked example of the comparison format';
+  }
+})();
+$('foot').innerHTML=__FOOT__;
 </script>
 """
 
@@ -176,9 +205,11 @@ CALIBRATION_INSIGHT = (
     "'<b>Where they diverge.</b> Both drivers reach a passing, integrity-clean model, and both walk the "
     "same two real regressions. The difference is the calibration: the deterministic policy steps the "
     "tolerance blindly ('+P.calibrations+' fixed steps) because it only knows the sign of the margin, while "
-    "the LLM agent read the temperature ramp, computed that T(t=3h)≈41.9&nbsp;°C, and set <code>t_tol=43</code> "
-    "in <b>one</b> step — DONE in '+A.edits+' edits vs '+P.edits+'. Same rails, same tests, same honest "
-    "result — different kind of intelligence in the seat.'")
+    "the LLM-agent column resolves the tolerance in a <b>single</b> reasoned step — DONE in '+A.edits+' "
+    "edits vs '+P.edits+'. <i>Note: this page is an illustrative hand-authored transcript, not a live model "
+    "run — a worked example of the comparison format. The reasoned calibration is a stand-in for the kind "
+    "of one-shot move an agent makes when it can reason about the dynamics; the environment here does not "
+    "expose the underlying ramp, so treat it as illustrative, not as measured live behaviour.</i>'")
 
 GIVEUP_INSIGHT = (
     "'<b>The task the policy could not do.</b> The deterministic policy consumed both substrates and grew, "
@@ -190,6 +221,64 @@ GIVEUP_INSIGHT = (
     "edits. This is the difference a real task exposes: the fix was not a knob and not a name-matched "
     "mechanism, it was a <b>regulatory coupling</b> that had to be reasoned from the biology.'")
 
+# diagnosis (live): the binding constraint was on an observable the metric didn't name.
+DIAGNOSIS_INSIGHT = (
+    "'<b>Reading the right observable.</b> Biomass was far below target, so the obvious lever is yield — "
+    "and the deterministic policy, keyed to the biomass margin, installs <code>boost_yield</code>. But "
+    "yield did nothing: <code>viability_final</code> was <b>0</b> — the cell was dying mid-run, capping "
+    "biomass regardless of yield. The LLM agent read the <i>joint</i> observable panel, saw nutrient fully "
+    "consumed yet viability collapsed, inferred the binding constraint was membrane viability rather than "
+    "yield, and switched to <code>stabilize_membrane</code> — DONE in '+A.edits+' edits. The fix required "
+    "diagnosing <i>which</i> observable was actually limiting, not optimizing the one the goal named.'")
+
+# bistable (live): the fix is a change in the FORM of the interaction, not a rate.
+BISTABLE_INSIGHT = (
+    "'<b>Structure, not rate.</b> Two mutually repressing genes only become <b>bistable</b> when the "
+    "repression is <i>cooperative</i> (Hill n≥2) — that is what carves two stable basins with a saddle "
+    "between them. The deterministic policy can raise expression or degradation, but both merely scale "
+    "rates and never create a second stable state, so it cannot reach the target. The LLM agent reasoned "
+    "from the biology (cf. Gardner et&nbsp;al. 2000) that the missing ingredient was cooperativity, and "
+    "installed <code>cooperative_binding</code> — reaching DONE in '+A.edits+' edits. The decisive move "
+    "changed the <b>form</b> of the interaction, which no single-knob rule reaches.'")
+
+# multicell (illustrative): an emergent tissue-scale phenotype + a simulator-selection move.
+MULTICELL_INSIGHT = (
+    "'<b>A tissue-scale phenotype, chosen not tuned.</b> The target — a spatial differentiation gradient "
+    "where cells near a niche stay stem and distant cells differentiate — is a <i>tissue-scale</i> "
+    "property no single-cell knob produces. The decisive moves were structural: SELECT the one simulator "
+    "(CPM) whose substrate supports a lattice + morphogen field + cell-fate relabeling, add the Wnt niche "
+    "field, then a subcellular fate model that reads local Wnt to relabel cells — DONE in '+A.edits+' "
+    "edits. A worst-margin knob rule has nothing to turn here.'")
+
+# multiscale (illustrative): the fix is an authored cross-scale translator with a unit conversion.
+MULTISCALE_INSIGHT = (
+    "'<b>The fix was a cross-scale translator, authored.</b> Coupling a cell-scale metabolic FLUX to a "
+    "tissue-scale DIFFUSION field means the two models stay unconnected until something maps "
+    "<code>secretion_flux → field_source</code>. And the units differ — mol/time vs mM/time over volume "
+    "V=2.0 — so mass only conserves across the interface if the conversion is applied. The agent authored "
+    "that translator; DONE in '+A.edits+' edits. This is not a menu mechanism — it is a unit-correct "
+    "coupling that has to be reasoned from the two scales.'")
+
+# sbml (illustrative): a whole-model validity property that turns on pathway topology.
+SBML_INSIGHT = (
+    "'<b>Whole-model validity, from topology.</b> The target is not a number but a set of model-validity "
+    "properties: COPASI loads the SBML, it reaches a <i>valid</i> steady state, mass is conserved, and the "
+    "terminal product C is the dominant species. The agent reasoned about the pathway TOPOLOGY — A→B alone "
+    "leaves B terminal, so C never accumulates; adding B→C makes C the sink — DONE in '+A.edits+' edits. "
+    "The move was structural (which reactions exist), not a rate the policy could step.'")
+
+_INSIGHTS = {"calibration": CALIBRATION_INSIGHT, "giveup": GIVEUP_INSIGHT,
+             "diagnosis": DIAGNOSIS_INSIGHT, "bistable": BISTABLE_INSIGHT,
+             "multicell": MULTICELL_INSIGHT, "multiscale": MULTISCALE_INSIGHT, "sbml": SBML_INSIGHT}
+
+_FOOT_LIVE = ("'Agent column: LIVE Claude run (single trajectory, n=1) via scripts/run_agent.py → "
+              "scripts/live_to_trajectory.py — integrity violations computed from a real loop_state "
+              "replay. Policy: scripts/build_loop_demo.py. Both on the same process-bigraph composite. "
+              "For the full n≥5 pass-rate distribution, run scripts/run_agent.py with an API key.'")
+_FOOT_ILLUS = ("'Agent column: illustrative hand-authored transcript (scripts/capture_*.py) — a worked "
+               "example of the comparison format, not a live model run. Policy: scripts/build_loop_demo.py. "
+               "Both on the same process-bigraph composite.'")
+
 
 def main():
     global HARD
@@ -199,17 +288,35 @@ def main():
     ap.add_argument("--hard", default=",".join(HARD))
     ap.add_argument("--out", default=os.path.join(ROOT, "docs", "agent-vs-policy.html"))
     ap.add_argument("--title", default="LLM agent vs deterministic policy")
-    ap.add_argument("--insight", choices=["calibration", "giveup"], default="calibration")
+    ap.add_argument("--insight", choices=sorted(_INSIGHTS), default="calibration")
     args = ap.parse_args()
-    HARD = args.hard.split(",")
-    insight = GIVEUP_INSIGHT if args.insight == "giveup" else CALIBRATION_INSIGHT
-    html = (TEMPLATE.replace("__AGENT__", json.dumps(norm_agent(args.agent)))
+    # HARD = the test ids shown in the per-iteration strip. Derive from the agent
+    # trajectory unless overridden, so every task (not just bounded-cell) renders.
+    if args.hard and args.hard != ",".join(["growth", "nutrient-depletion", "conservation",
+                                            "viability-cliff", "viability-in-band"]):
+        HARD = args.hard.split(",")
+    else:
+        at = json.load(open(args.agent))
+        ids = []
+        for t in at.get("tests", []):
+            tid = t.get("id") or t.get("name")
+            if tid and tid not in ids:
+                ids.append(tid)
+        HARD = ids or args.hard.split(",")
+    abbr = {h: _abbr(h) for h in HARD}
+    agent = norm_agent(args.agent)
+    foot = _FOOT_LIVE if agent.get("provenance") == "live" else _FOOT_ILLUS
+    html = (TEMPLATE.replace("__AGENT__", json.dumps(agent))
                     .replace("__POLICY__", json.dumps(norm_policy(args.policy)))
                     .replace("__TITLE__", args.title)
-                    .replace("__INSIGHT__", insight))
+                    .replace("__INSIGHT__", _INSIGHTS[args.insight])
+                    .replace("__HARD__", json.dumps(HARD))
+                    .replace("__ABBR__", json.dumps(abbr))
+                    .replace("__FOOT__", foot))
     with open(args.out, "w") as fh:
         fh.write(html)
-    print(f"rendered -> {os.path.relpath(args.out, ROOT)} ({len(html)} bytes)")
+    print(f"rendered -> {os.path.relpath(args.out, ROOT)} ({len(html)} bytes, "
+          f"provenance={agent.get('provenance')})")
 
 
 if __name__ == "__main__":

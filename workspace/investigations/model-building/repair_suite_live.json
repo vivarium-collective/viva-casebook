@@ -1,61 +1,95 @@
 {
-  "schema": "biomodels_repair_suite/v1",
-  "substrate": "Elowitz 2000 repressilator (BioModels) via COPASI/basico \u2014 objective ground truth is the intact reference model",
-  "model": "claude-sonnet-4-5 (live)",
-  "transport": "in-session live runs via real Claude Code sub-agents driving scripts/agent_env.py repair-<break>",
+  "schema": "repair_suite_pe/v1",
+  "task": "break-and-repair via COPASI parameter estimation",
+  "model": "repressilator (SBML) simulated in the real COPASI backend",
+  "oracle": "COPASI Parameter Estimation (Levenberg\u2013Marquardt) fitting the intact reference time-course \u2014 recall-free by construction; the optimizer never sees a canonical value",
+  "driver": "deterministic demonstration of the PE repair + recall-free localization machinery \u2014 no LLM recall; every value is real COPASI PE output (reproduce: python scripts/gen_repair_demo.py)",
+  "candidate_parameters": [
+    "n",
+    "KM",
+    "translation efficiency"
+  ],
   "runs": [
     {
-      "break": "hill",
-      "broken_param": "n",
+      "break_id": "repair-01",
+      "param": "n",
+      "blurb": "the cooperative-repression Hill coefficient",
       "broken_value": 1.0,
       "true_value": 2.0,
-      "blurb": "the cooperative-repression Hill coefficient",
-      "state": "DONE",
-      "n_steps": 1,
-      "step": {
-        "param": "n",
-        "value": 2,
-        "rmsd_vs_reference": 0.0,
+      "broken_rmsd": 0.307,
+      "fit": {
+        "fitted": {
+          "n": 2.0
+        },
+        "resim_rmsd": 9e-05,
         "matched": true,
-        "reasoning": "Cross-checked parameter internal consistency (decay constants = ln(2)/half-life; three leakiness ratios self-consistent \u2192 untampered). n=1.0 was the only uncorroborated AND dynamically critical parameter: the alpha=216/beta=0.2 regime needs cooperative repression (n=2) to cross the Hopf bifurcation into sustained oscillation. Set n=2."
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "n",
+        "correct": true,
+        "moved_from_broken": {
+          "n": 1.0,
+          "KM": 0.0,
+          "translation efficiency": 0.0
+        }
       }
     },
     {
-      "break": "km",
-      "broken_param": "KM",
+      "break_id": "repair-02",
+      "param": "KM",
+      "blurb": "the repression half-saturation constant",
       "broken_value": 80.0,
       "true_value": 40.0,
-      "blurb": "the repression half-saturation constant",
-      "state": "DONE",
-      "n_steps": 1,
-      "step": {
-        "param": "KM",
-        "value": 40,
-        "rmsd_vs_reference": 0.0,
+      "broken_rmsd": 0.1827,
+      "fit": {
+        "fitted": {
+          "KM": 40.0
+        },
+        "resim_rmsd": 3e-06,
         "matched": true,
-        "reasoning": "KM=80 is exactly double the canonical Elowitz repressilator value (40); every other parameter matched textbook values. A doubled repression threshold detunes/damps the oscillation. Singled out KM as the outlier; set KM=40."
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "KM",
+        "correct": true,
+        "moved_from_broken": {
+          "n": 0.0,
+          "KM": 40.0,
+          "translation efficiency": 0.0
+        }
       }
     },
     {
-      "break": "translation",
-      "broken_param": "translation efficiency",
+      "break_id": "repair-03",
+      "param": "translation efficiency",
+      "blurb": "the translation efficiency (proteins per transcript)",
       "broken_value": 10.0,
       "true_value": 20.0,
-      "blurb": "the translation efficiency (proteins per transcript)",
-      "state": "DONE",
-      "n_steps": 1,
-      "step": {
-        "param": "translation efficiency",
-        "value": 20,
-        "rmsd_vs_reference": 0.0,
+      "broken_rmsd": 0.227,
+      "fit": {
+        "fitted": {
+          "translation efficiency": 20.0
+        },
+        "resim_rmsd": 3e-06,
         "matched": true,
-        "reasoning": "translation efficiency=10 is half the canonical 20 and inconsistent with the derived k_tl constant + other translation kinetics; all other params matched repressilator magnitudes. Restored to 20."
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "translation efficiency",
+        "correct": true,
+        "moved_from_broken": {
+          "n": 0.0,
+          "KM": 0.0,
+          "translation efficiency": 10.0
+        }
       }
     }
   ],
   "summary": {
     "n_breaks": 3,
-    "n_done": 3,
-    "note": "3 distinct parameter breaks, each diagnosed + repaired in one step against the reference model, each with different reasoning (bifurcation, outlier-vs-canonical, derived-constant consistency)."
+    "all_repaired": true,
+    "all_localized_correctly": true,
+    "note": "Each break is repaired by optimization (PE recovers the true value, resim RMSD ~0) and independently DIAGNOSED by the recall-free localization baseline (fit all candidates; the broken one is the one that must move). Break ids are opaque; the reference and broken time-courses are shown on the card. Celebrity-ness of the model no longer helps \u2014 the oracle is an optimizer, not recall."
   }
 }

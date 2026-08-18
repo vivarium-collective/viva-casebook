@@ -63,10 +63,12 @@ def _run_once(client, model, temperature, task, budget):
     steps, transcript = [], []
     reached_done = False
 
+    final_text = ""
     for _turn in range(budget):
         resp = client.messages.create(model=model, max_tokens=1600, system=SYSTEM,
                                       tools=TOOLS, temperature=temperature, messages=messages)
         text = "".join(b.text for b in resp.content if b.type == "text")
+        final_text = text or final_text
         tool_uses = [b for b in resp.content if b.type == "tool_use"]
         transcript.append({"role": "assistant", "text": text,
                            "tool_calls": [{"name": b.name, "input": b.input} for b in tool_uses]})
@@ -86,8 +88,10 @@ def _run_once(client, model, temperature, task, budget):
                     tests, npass, nhard = step(active)
                     payload = {"active": sorted(active), "tests": tests, "n_pass": npass,
                                "n_hard": nhard, "all_pass": npass == nhard}
+                    # `reasoning` = the assistant text that PRECEDED this step call.
+                    # live_to_trajectory.py renders this field; it must be written here.
                     steps.append({"active": sorted(active), "n_pass": npass, "n_hard": nhard,
-                                  "all_pass": npass == nhard})
+                                  "all_pass": npass == nhard, "reasoning": text})
                     reached_done = reached_done or (npass == nhard)
             results.append({"type": "tool_result", "tool_use_id": b.id,
                             "content": json.dumps(payload)})
@@ -95,7 +99,8 @@ def _run_once(client, model, temperature, task, budget):
 
     installs = {frozenset(s["active"]) for s in steps if s["active"]}
     return {"state": "DONE" if reached_done else "GIVE_UP",
-            "edits": len(installs), "n_steps": len(steps), "steps": steps, "transcript": transcript}
+            "edits": len(installs), "n_steps": len(steps), "steps": steps,
+            "final_note": final_text, "transcript": transcript}
 
 
 def run_task(client, model, temperature, task, runs, budget):

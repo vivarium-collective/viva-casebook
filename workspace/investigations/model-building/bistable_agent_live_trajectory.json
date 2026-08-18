@@ -1,7 +1,10 @@
 {
   "schema": "agent_build_trajectory/v1",
   "study": "bistable",
-  "driver": "LLM agent \u2014 LIVE (claude-sonnet-4-5 (live)), reasoned each build from the env verdicts",
+  "driver": "LLM agent \u2014 LIVE (claude-sonnet-4-5 (live)), n=1, pass_rate=1.0",
+  "provenance": "live",
+  "n_runs": 1,
+  "pass_rate": 1.0,
   "contract": "Build a bistable genetic switch: two mutually repressing genes A and B that settle into two DISTINCT stable states and latch to whichever gene starts ahead (a decisive toggle, not a graded midpoint).",
   "tests": [
     {

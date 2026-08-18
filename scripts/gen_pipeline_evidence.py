@@ -56,7 +56,8 @@ def menu_section():
         cards.append(
             f'<div class="card pass"><h3>{esc(MENU_BLURB.get(t,t))}</h3>'
             f'<div class="chiprow"><span class="chip pass">✓ {esc(run["state"])} · {run.get("edits","?")} edits</span>'
-            f'<span class="chip mono">{esc(d.get("model",""))}</span></div>{steps}</div>')
+            f'<span class="chip mono">{esc(d.get("model",""))}</span>'
+            f'<span class="chip mono">n={esc(d.get("summary",{}).get("n_runs",1))}</span></div>{steps}</div>')
     return (
         '<div class="sec-h"><h2>Live agents on the menu tasks</h2><span class="rule"></span></div>'
         '<p class="sub">Real Claude sub-agents drive the environment turn by turn, reasoning from graded '
@@ -74,19 +75,36 @@ def repair_section():
         return ""
     cards = []
     for run in r["runs"]:
-        s = run["step"]
+        loc = run["localize"]
+        fit = run["fit"]
+        moved = ", ".join(f"{p}:{v}" for p, v in loc["moved_from_broken"].items())
         cards.append(
-            f'<div class="card pass"><h3>Broken: <code>{esc(run["broken_param"])}</code> — {esc(run["blurb"])}</h3>'
-            f'<div class="chiprow"><span class="chip pass">✓ repaired in 1 step</span>'
-            f'<span class="chip mono">{esc(run["broken_param"])}: {esc(run["broken_value"])} → {esc(run["true_value"])}</span>'
-            f'<span class="chip mono">rmsd → 0.0</span></div>'
-            f'<div class="reason">{esc(s.get("reasoning",""))}</div></div>')
+            f'<div class="card pass"><h3>Break <code>{esc(run["break_id"])}</code> '
+            f'<span style="font-weight:400;color:var(--ink-3)">(opaque — the id does not name the parameter)</span></h3>'
+            f'<div class="chiprow">'
+            f'<span class="chip pass">✓ PE repaired · resim RMSD {esc(fit["resim_rmsd"])}</span>'
+            f'<span class="chip mono">fit → {esc(fit["fitted"])}</span>'
+            f'<span class="chip mono">{esc(fit.get("method",""))}</span></div>'
+            f'<div class="reason"><b>Recall-free diagnosis (localize baseline):</b> PE fit all candidate '
+            f'parameters {esc(D["repair"].get("candidate_parameters"))} jointly against the reference trace; '
+            f'only <code>{esc(loc["diagnosed_parameter"])}</code> had to move (moved: {esc(moved)}) → '
+            f'diagnosed the break by optimization, no canonical value consulted. '
+            f'The break was <code>{esc(run["param"])}</code> ({esc(run["blurb"])}) '
+            f'{esc(run["broken_value"])} → {esc(run["true_value"])}; diagnosis '
+            f'{"correct" if loc["correct"] else "INCORRECT"}.</div></div>')
     return (
-        '<div class="sec-h"><h2>Interesting biology — BioModels break-and-repair</h2><span class="rule"></span></div>'
-        '<p class="sub">A curated BioModels model (Elowitz 2000 repressilator) run in the real COPASI backend. '
-        'One kinetic parameter is broken; the agent must diagnose which and repair it against the intact '
-        'reference — <b>objective ground truth, not an author-set band, answer not in the prompt.</b> Three '
-        'distinct breaks, each diagnosed first-try with different reasoning.</p>' + "".join(cards))
+        '<div class="sec-h"><h2>Data-grounded biology — break &amp; repair by parameter estimation</h2><span class="rule"></span></div>'
+        '<p class="sub">A kinetic model run in the real COPASI backend; one parameter is broken and must be '
+        'repaired against the intact reference time-course. The repair oracle is <b>optimization, not '
+        'recall</b> — COPASI Parameter Estimation fits the reference trace and recovers the true value, and a '
+        'recall-free <b>localization</b> baseline fits all candidates and identifies the broken one by which '
+        'must move. Break ids are opaque and the reference + broken traces are shown, so the diagnosis cannot '
+        'come from a memorized number.</p>' + "".join(cards) +
+        '<div class="callout">🔬 <b>Why this is stronger than the old version.</b> The earlier suite graded a '
+        '<i>recalled</i> fix (the celebrity repressilator, diagnosed from "double the canonical value"). Here '
+        'the oracle is a COPASI optimizer fitting the trace — celebrity-ness of the model no longer helps, '
+        'because recall plays no role. Broadening to a corpus of non-celebrity models is the next step '
+        '(each needs its own PE window tuning).</div>')
 
 
 def author_section():
@@ -109,23 +127,30 @@ def author_tests_section():
     at = D["author_tests"]
     if not at:
         return ""
-    fc = at["live_full_cycle"]
+    fc = at["full_cycle"]
     catch = at["audit_catches_insufficiency_demo"]
+    enforced = at.get("lock_enforced_demo", {})
     return (
-        '<div class="sec-h"><h2>The AUTHOR phase — agent authors + audits + locks its own tests</h2><span class="rule"></span></div>'
-        '<p class="sub">The loop\'s real novelty: from an open question the agent writes acceptance tests, a '
-        '<b>hardened audit</b> runs degenerate null models to check the tests reject them (executable, not a '
-        'label), the tests are <b>locked with a pre-registration hash</b>, then the agent builds a model that '
-        'passes them.</p>'
-        f'<div class="card pass"><h3>Full cycle: question → author → audit → lock → build</h3>'
-        f'<div class="chiprow"><span class="chip pass">✓ built · all tests pass</span>'
-        f'<span class="chip">audit: sufficient</span><span class="chip">pre-registered (sha256)</span></div>'
-        f'<div class="reason">{esc(fc.get("agent_reasoning",""))}</div></div>'
-        f'<div class="callout">🔎 <b>The audit is executable.</b> On a naive single lower-bound test, it '
-        f'RUNS the degenerate models and flags that '
-        f'<b>{esc(", ".join(catch["degenerate_models_that_slip_through"]))}</b> slip through — so the tests '
-        f'cannot be locked until they exclude every degenerate behaviour. Not a classification label, not an '
-        f'LLM promise.</div>')
+        '<div class="sec-h"><h2>The AUTHOR phase — author + audit + lock its own tests</h2><span class="rule"></span></div>'
+        '<p class="sub">The loop\'s real novelty: from an open question, acceptance tests are written, a '
+        '<b>hardened audit</b> RUNS degenerate null models to check the tests reject them (executable, not a '
+        'label), the tests are <b>locked with a pre-registration hash that build() re-verifies</b>, then a '
+        'model is built that passes them. <i>This panel is a deterministic demonstration of the '
+        'audit→lock→build machinery — no LLM in the loop; every verdict is real output of '
+        '<code>author_tests_task.py</code>.</i></p>'
+        f'<div class="card pass"><h3>Full cycle: question → author → hardened audit → lock → build</h3>'
+        f'<div class="chiprow"><span class="chip pass">✓ built · {esc(fc.get("n_pass"))}/{esc(fc.get("n_hard"))} tests pass</span>'
+        f'<span class="chip">audit: sufficient</span><span class="chip mono">lock sha256 {esc((fc.get("tests_hash") or "")[:10])}…</span>'
+        f'<span class="chip">min/max bounded</span></div>'
+        f'<div class="reason">{esc(fc.get("reasoning",""))}</div></div>'
+        f'<div class="callout">🔎 <b>The audit rejects a plausible-looking suite.</b> A <code>final</code>-only '
+        f'band (final≥4.5, final≤5.5) looks reasonable — but the hardened audit RUNS transient nulls and flags '
+        f'that <b>{esc(", ".join(catch["degenerate_models_that_slip_through"]))}</b> slip through: a model that '
+        f'spikes to 10⁶ mid-run and settles to ~5 passes a final-only test while violating "stays bounded". So '
+        f'the suite cannot lock until it also bounds <code>max</code> and <code>min</code>. '
+        + ('<b>And the lock is enforced:</b> editing the locked tests after pre-registration makes '
+           '<code>build()</code> refuse to grade (hash mismatch). ' if enforced.get("build_refused") else '')
+        + 'Not a classification label, not a promise.</div>')
 
 
 def page():
@@ -133,15 +158,17 @@ def page():
         f"<title>Agentic Loop — Live Evidence</title><style>{CSS}</style>"
         '<div class="wrap"><div class="mast">'
         '<div class="eyebrow">viva-casebook · after the review</div>'
-        '<h1>The agentic model-building loop, shown with real agents</h1>'
-        '<p class="lede">Every claim below is a genuine live Claude sub-agent driving the environment — not a '
-        'hand-typed transcript. This is the pipeline after Fable\'s review: honest evaluation, an open action '
-        'space, data-grounded biology, and the agent authoring its own audited, pre-registered tests.</p>'
+        '<h1>The agentic model-building loop, after the review</h1>'
+        '<p class="lede">The pipeline after Fable\'s review: honest evaluation (a fair enumerating baseline), '
+        'an open action space, data-grounded biology, and an audited, pre-registered test-authoring phase. '
+        'Provenance is stated per panel — the menu tasks are <b>live</b> Claude sub-agent runs (single '
+        'trajectory, n=1); the AUTHOR-phase panel is a <b>deterministic demonstration</b> of the '
+        'audit/lock/build machinery. Every verdict shown is real engine output.</p>'
         '<div class="kpi">'
-        '<div><div class="n">7</div><div class="l">live agent runs</div></div>'
-        '<div><div class="n">3</div><div class="l">BioModels diagnoses (real COPASI)</div></div>'
+        '<div><div class="n">3</div><div class="l">live menu-task runs (n=1 each)</div></div>'
+        '<div><div class="n">COPASI</div><div class="l">parameter-estimation repair oracle</div></div>'
         '<div><div class="n">1</div><div class="l">Process authored from scratch</div></div>'
-        '<div><div class="n">sha256</div><div class="l">pre-registered test lock</div></div></div>'
+        '<div><div class="n">sha256</div><div class="l">enforced pre-registration lock</div></div></div>'
         '</div>'
         + menu_section() + repair_section() + author_section() + author_tests_section()
         + '<footer>Rendered from committed live-run records in workspace/investigations/model-building/*.json · '

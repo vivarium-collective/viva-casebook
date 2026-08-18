@@ -40,12 +40,15 @@
   .t-fx{background:var(--good-w);color:var(--good)} .t-rg{background:var(--bad-w);color:var(--bad)}
   .callout{border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:10px;padding:14px 16px;background:var(--panel);margin-top:16px;font-size:13.5px;color:var(--soft)}
   .callout b{color:var(--ink)}
+  .prov{margin-top:14px;font-size:12.5px;font-family:var(--mono);display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border-radius:999px;border:1px solid var(--line2)}
+  .prov.live{background:var(--good-w);color:var(--good)} .prov.illustrative{background:var(--warn-w);color:var(--warn)}
   .foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);font-family:var(--mono)}
 </style>
 <div class="wrap">
   <div class="eyebrow">Same study · same composite · different driver</div>
-  <h1>Agent vs Policy</h1>
+  <h1>SBML pathway build — agent vs policy</h1>
   <p class="lede">The exact same model-building study — same real process-bigraph composite, same locked tests, same mechanism library — built two ways. One driver is an actual LLM reasoning over the graded margins; the other is a hand-coded worst-negative-margin rule. Every verdict below is real engine output.</p>
+  <div class="prov" id="prov"></div>
   <h2>Scorecard</h2>
   <div class="score"><table><thead><tr><th>Metric</th><th>🤖 LLM agent</th><th>⚙️ Deterministic policy</th></tr></thead><tbody id="score"></tbody></table></div>
   <h2>The two builds, side by side</h2>
@@ -54,11 +57,11 @@
   <div class="foot" id="foot"></div>
 </div>
 <script>
-const A={"driver": "LLM agent (Claude Sonnet)", "sub": "reasons each edit from the graded margins + a functional mechanism description", "edits": 2, "state": "DONE", "violations": 0, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "Start the pathway by converting A to B, the first required step before B can flow to C.", "newly_fixed": [], "regressed": [], "tests": []}, {"label": "A->B", "n_pass": 4, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "A\u2192B alone leaves B as the terminal species; add B\u2192C so the terminal product C accumulates.", "newly_fixed": ["sbml-valid", "copasi-loads", "steady-state", "mass-conserved"], "regressed": [], "tests": []}, {"label": "A->B + B->C", "n_pass": 5, "n_hard": 5, "edit": "DONE", "reasoning": "All five quality tests pass \u2014 COPASI loads the model, it reaches a valid steady state, mass is conserved, and C is the accumulating terminal product.", "newly_fixed": ["terminal-product"], "regressed": [], "tests": []}]}, P={"driver": "Deterministic policy", "sub": "a hand-coded rule: pick the worst-negative-margin hard test, install-or-calibrate", "edits": 1, "state": "GIVE_UP", "violations": 0, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": []}, {"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": []}]};
+const A={"driver": "LLM agent (Claude Sonnet)", "driver_full": "LLM agent (Claude Sonnet) \u2014 authored the SBML reaction network, graded in real COPASI", "provenance": "illustrative", "n_runs": null, "pass_rate": null, "sub": "reasons each edit from the graded margins + a functional mechanism description", "edits": 2, "state": "DONE", "violations": 0, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "Start the pathway by converting A to B, the first required step before B can flow to C.", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "A->B", "n_pass": 4, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "A\u2192B alone leaves B as the terminal species; add B\u2192C so the terminal product C accumulates.", "newly_fixed": ["sbml-valid", "copasi-loads", "steady-state", "mass-conserved"], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "within_tol", "margin": null}, {"name": "copasi-loads", "verdict": "within_tol", "margin": null}, {"name": "steady-state", "verdict": "within_tol", "margin": null}, {"name": "mass-conserved", "verdict": "within_tol", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "A->B + B->C", "n_pass": 5, "n_hard": 5, "edit": "DONE", "reasoning": "All five quality tests pass \u2014 COPASI loads the model, it reaches a valid steady state, mass is conserved, and C is the accumulating terminal product.", "newly_fixed": ["terminal-product"], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "within_tol", "margin": null}, {"name": "copasi-loads", "verdict": "within_tol", "margin": null}, {"name": "steady-state", "verdict": "within_tol", "margin": null}, {"name": "mass-conserved", "verdict": "within_tol", "margin": null}, {"name": "terminal-product", "verdict": "within_tol", "margin": null}]}]}, P={"driver": "Deterministic policy", "sub": "a hand-coded rule: pick the worst-negative-margin hard test, install-or-calibrate", "edits": 1, "state": "GIVE_UP", "violations": 0, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}]};
 const $=(id)=>document.getElementById(id);
-const HARD=["growth","nutrient-depletion","conservation","viability-cliff","viability-in-band"];
+const HARD=["sbml-valid", "copasi-loads", "steady-state", "mass-conserved", "terminal-product"];
 const vc=(v)=>v==='within_tol'?['var(--good-w)','var(--good)']:v==='mismatch'?['var(--bad-w)','var(--bad)']:['var(--warn-w)','var(--warn)'];
-const abbr={"growth":"grow","nutrient-depletion":"nutr","conservation":"cons","viability-cliff":"cliff","viability-in-band":"band"};
+const abbr={"sbml-valid": "sbmlva", "copasi-loads": "copalo", "steady-state": "steast", "mass-conserved": "massco", "terminal-product": "termpr"};
 
 function scoreRow(label, a, p, awin){
   return `<tr><td class="metric">${label}</td><td class="${awin===true?'win':''}">${a}</td><td class="${awin===false?'win':''}">${p}</td></tr>`;
@@ -93,6 +96,18 @@ function renderCol(run, cls, badge){
 $('col-agent').innerHTML=renderCol(A,'agent','reasoned');
 $('col-policy').innerHTML=renderCol(P,'policy','coded');
 
-$('insight').innerHTML='<b>The task the policy could not do.</b> The deterministic policy consumed both substrates and grew, but got the <b>regulation</b> wrong — it ate lactose at the same time as glucose — and then <b>gave up</b> ('+P.iters[P.iters.length-1].n_pass+'/'+P.iters[P.iters.length-1].n_hard+'), because no mechanism is <i>named</i> for the ordering test and its worst-margin rule had no move. The LLM agent, on the identical task, reasoned that lactose was being co-consumed because <code>lac_repression</code> was stuck ON, and installed <b>catabolite repression</b> to gate lactose uptake by glucose — reaching DONE in '+A.edits+' edits. This is the difference a real task exposes: the fix was not a knob and not a name-matched mechanism, it was a <b>regulatory coupling</b> that had to be reasoned from the biology.';
-$('foot').innerHTML='Agent decisions: real Claude Sonnet run via scripts/agent_step.py + capture_agent_run.py · policy: scripts/build_loop_demo.py · both on the same process-bigraph composite.';
+$('insight').innerHTML='<b>Whole-model validity, from topology.</b> The target is not a number but a set of model-validity properties: COPASI loads the SBML, it reaches a <i>valid</i> steady state, mass is conserved, and the terminal product C is the dominant species. The agent reasoned about the pathway TOPOLOGY — A→B alone leaves B terminal, so C never accumulates; adding B→C makes C the sink — DONE in '+A.edits+' edits. The move was structural (which reactions exist), not a rate the policy could step.';
+
+// provenance banner: honest about whether the agent column is a LIVE run or an illustrative transcript
+(function(){
+  var live = A.provenance==='live';
+  var p=$('prov'); p.className='prov '+(live?'live':'illustrative');
+  if(live){
+    p.innerHTML='● LIVE agent run · '+(A.driver_full||A.driver)+(A.pass_rate!=null?(' · pass-rate '+A.pass_rate):'')
+      +' · single-trajectory demonstration (n='+(A.n_runs||1)+')';
+  } else {
+    p.innerHTML='◐ Illustrative hand-authored transcript — not a live model run; a worked example of the comparison format';
+  }
+})();
+$('foot').innerHTML='Agent column: illustrative hand-authored transcript (scripts/capture_*.py) — a worked example of the comparison format, not a live model run. Policy: scripts/build_loop_demo.py. Both on the same process-bigraph composite.';
 </script>
