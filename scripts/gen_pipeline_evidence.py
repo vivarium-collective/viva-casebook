@@ -98,8 +98,9 @@ def repair_section():
         'repaired against the intact reference time-course. The repair oracle is <b>optimization, not '
         'recall</b> — COPASI Parameter Estimation fits the reference trace and recovers the true value, and a '
         'recall-free <b>localization</b> baseline fits all candidates and identifies the broken one by which '
-        'must move. Break ids are opaque and the reference + broken traces are shown, so the diagnosis cannot '
-        'come from a memorized number.</p>' + "".join(cards) +
+        'must move. Break ids are opaque and the reference + broken time-courses are exposed on the task card '
+        '(the agent sees the divergence, not just a scalar), so the diagnosis cannot come from a memorized '
+        'number.</p>' + "".join(cards) +
         '<div class="callout">🔬 <b>Why this is stronger than the old version.</b> The earlier suite graded a '
         '<i>recalled</i> fix (the celebrity repressilator, diagnosed from "double the canonical value"). Here '
         'the oracle is a COPASI optimizer fitting the trace — celebrity-ness of the model no longer helps, '
