@@ -1,0 +1,35 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "bistable",
+  "model": "claude-sonnet-4-5 (live)",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py; scripts/run_agent.py runs the same environment through the Anthropic API for n>=5",
+  "runs": [
+    {
+      "run_index": 0,
+      "state": "DONE",
+      "edits": 1,
+      "n_steps": 1,
+      "steps": [
+        {
+          "active": [
+            "cooperative_binding"
+          ],
+          "n_pass": 2,
+          "n_hard": 2,
+          "all_pass": true,
+          "reasoning": "Two distinct stable states in mutual repression require COOPERATIVE repression (Hill n>=2), per Gardner 2000. boost_expression / add_degradation only scale rates and shouldn't create bistability, so try cooperative_binding alone (minimal) first."
+        }
+      ],
+      "final_note": "Required cooperative_binding (Hill n>=2 mutual repression) alone to satisfy the bistable and decisive tests."
+    }
+  ],
+  "summary": {
+    "n_runs": 1,
+    "n_done": 1,
+    "pass_rate": 1.0,
+    "edits_when_done": [
+      1
+    ],
+    "note": "n=1 in-session; run scripts/run_agent.py --task bistable --runs 5 with an API key for n>=5."
+  }
+}

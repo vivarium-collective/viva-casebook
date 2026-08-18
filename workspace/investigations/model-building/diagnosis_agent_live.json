@@ -1,0 +1,44 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "diagnosis",
+  "model": "claude-sonnet-4-5 (live)",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py; scripts/run_agent.py runs the same environment through the Anthropic API for n>=5",
+  "runs": [
+    {
+      "run_index": 0,
+      "state": "DONE",
+      "edits": 2,
+      "n_steps": 2,
+      "steps": [
+        {
+          "active": [
+            "boost_yield"
+          ],
+          "n_pass": 0,
+          "n_hard": 2,
+          "all_pass": false,
+          "reasoning": "Biomass far below target; boost_yield raises biomass yield per nutrient, the most direct lever on growth, try first."
+        },
+        {
+          "active": [
+            "stabilize_membrane"
+          ],
+          "n_pass": 2,
+          "n_hard": 2,
+          "all_pass": true,
+          "reasoning": "boost_yield still failed with viability_final=0.0 though nutrient fully consumed \u2014 the cell was dying mid-run, capping biomass regardless of yield. That is a viability/membrane problem, not uptake/yield. Swap to stabilize_membrane."
+        }
+      ],
+      "final_note": "Low biomass was a symptom of the cell dying (viability\u21920), not insufficient uptake/yield; correct minimal fix is stabilize_membrane alone."
+    }
+  ],
+  "summary": {
+    "n_runs": 1,
+    "n_done": 1,
+    "pass_rate": 1.0,
+    "edits_when_done": [
+      2
+    ],
+    "note": "n=1 in-session; run scripts/run_agent.py --task diagnosis --runs 5 with an API key for n>=5."
+  }
+}
