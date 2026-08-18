@@ -1,0 +1,262 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "diauxie",
+  "driver": "LLM agent (Claude Sonnet) \u2014 reasoned each edit from graded verdicts",
+  "contract": "Build a cell that grows on a mixture of glucose and lactose with the DIAUXIC phenotype: it consumes glucose first, and only once glucose is exhausted does it switch to lactose \u2014 a sequential shift, not simultaneous co-consumption.",
+  "tests": [
+    {
+      "id": "glucose-consumed",
+      "label": "Glucose is consumed",
+      "expected": "\u2264 0.1",
+      "provenance": "10 mM glucose \u2192 \u22640.1"
+    },
+    {
+      "id": "lactose-consumed",
+      "label": "Lactose is consumed",
+      "expected": "\u2264 0.1",
+      "provenance": "10 mM lactose \u2192 \u22640.1"
+    },
+    {
+      "id": "growth",
+      "label": "Cell grows on BOTH substrates",
+      "expected": "\u2265 8.0",
+      "provenance": "max biomass \u2265 8 (both yields)"
+    },
+    {
+      "id": "diauxic-order",
+      "label": "Glucose is used up BEFORE lactose (sequential)",
+      "expected": "\u2265 7.0",
+      "provenance": "lactose remaining when glucose is depleted \u2265 7 mM \u2014 the diauxic shift (Monod 1942)"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 1,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "glucose_uptake",
+        "reasoning": "Install glucose_uptake first since nothing consumes glucose or grows biomass yet, and lactose uptake/repression are moot without a glucose signal to react to."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "mismatch",
+          "observed": 0.5,
+          "expected": "\u2265 8.0",
+          "margin": -7.5,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "glucose_uptake"
+      ],
+      "n_pass": 2,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "lactose_uptake",
+        "reasoning": "Install lactose_uptake so lactose gets consumed and contributes to biomass growth past the 8.0 threshold (anticipating diauxic-order may regress until repression is added)."
+      },
+      "newly_fixed": [
+        "glucose-consumed"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "mismatch",
+          "observed": 5.0,
+          "expected": "\u2265 8.0",
+          "margin": -3.0000000000000044,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "glucose_uptake",
+        "lactose_uptake"
+      ],
+      "n_pass": 3,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "mechanism": "catabolite_repression",
+        "reasoning": "Lactose is consumed simultaneously because lac_repression is stuck at 1.0; install catabolite_repression so it suppresses lactose uptake while glucose is present, enforcing the diauxic sequential order."
+      },
+      "newly_fixed": [
+        "lactose-consumed",
+        "growth"
+      ],
+      "regressed": [
+        "diauxic-order"
+      ],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "within_tol",
+          "observed": 9.5,
+          "expected": "\u2265 8.0",
+          "margin": 1.5000000000000036,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "mismatch",
+          "observed": 0.04,
+          "expected": "\u2265 7.0",
+          "margin": -6.960358990530732,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "catabolite_repression",
+        "glucose_uptake",
+        "lactose_uptake"
+      ],
+      "n_pass": 4,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "All four hard tests read within_tol \u2014 glucose then lactose, sequentially \u2014 so the diauxic model is built."
+      },
+      "newly_fixed": [
+        "diauxic-order"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1,
+          "severity": "hard"
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "within_tol",
+          "observed": 9.5,
+          "expected": "\u2265 8.0",
+          "margin": 1.500000000000007,
+          "severity": "hard"
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "within_tol",
+          "observed": 9.129,
+          "expected": "\u2265 7.0",
+          "margin": 2.129216234945888,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 3,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "diauxie",
+  "driver": "deterministic worst-margin policy",
+  "contract": "Build a cell that grows on a mixture of glucose and lactose with the DIAUXIC phenotype: it consumes glucose first, and only once glucose is exhausted does it switch to lactose \u2014 a sequential shift, not simultaneous co-consumption.",
+  "tests": [
+    {
+      "id": "glucose-consumed",
+      "label": "Glucose is consumed",
+      "expected": "\u2264 0.1",
+      "provenance": "10 mM glucose \u2192 \u22640.1"
+    },
+    {
+      "id": "lactose-consumed",
+      "label": "Lactose is consumed",
+      "expected": "\u2264 0.1",
+      "provenance": "10 mM lactose \u2192 \u22640.1"
+    },
+    {
+      "id": "growth",
+      "label": "Cell grows on BOTH substrates",
+      "expected": "\u2265 8.0",
+      "provenance": "max biomass \u2265 8 (both yields)"
+    },
+    {
+      "id": "diauxic-order",
+      "label": "Glucose is used up BEFORE lactose (sequential)",
+      "expected": "\u2265 7.0",
+      "provenance": "lactose remaining when glucose is depleted \u2265 7 mM \u2014 the diauxic shift (Monod 1942)"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 1,
+      "n_hard": 4,
+      "decision": {
+        "kind": "install",
+        "test": "glucose-consumed",
+        "margin": -9.9,
+        "mechanism": "glucose_uptake"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "mismatch",
+          "observed": 0.5,
+          "expected": "\u2265 8.0",
+          "margin": -7.5
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "glucose_uptake"
+      ],
+      "n_pass": 2,
+      "n_hard": 4,
+      "decision": {
+        "kind": "install",
+        "test": "lactose-consumed",
+        "margin": -9.9,
+        "mechanism": "lactose_uptake"
+      },
+      "newly_fixed": [
+        "glucose-consumed"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "mismatch",
+          "observed": 10.0,
+          "expected": "\u2264 0.1",
+          "margin": -9.9
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "mismatch",
+          "observed": 5.0,
+          "expected": "\u2265 8.0",
+          "margin": -3.0000000000000044
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "within_tol",
+          "observed": 10.0,
+          "expected": "\u2265 7.0",
+          "margin": 3.0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "glucose_uptake",
+        "lactose_uptake"
+      ],
+      "n_pass": 3,
+      "n_hard": 4,
+      "decision": {
+        "kind": "blocked",
+        "test": "diauxic-order",
+        "margin": -6.960358990530732,
+        "note": "no mechanism is named for `diauxic-order` \u2014 the policy's map has no move"
+      },
+      "newly_fixed": [
+        "lactose-consumed",
+        "growth"
+      ],
+      "regressed": [
+        "diauxic-order"
+      ],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "within_tol",
+          "observed": 9.5,
+          "expected": "\u2265 8.0",
+          "margin": 1.5000000000000036
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "mismatch",
+          "observed": 0.04,
+          "expected": "\u2265 7.0",
+          "margin": -6.960358990530732
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "glucose_uptake",
+        "lactose_uptake"
+      ],
+      "n_pass": 3,
+      "n_hard": 4,
+      "decision": {
+        "kind": "blocked",
+        "test": "diauxic-order",
+        "margin": -6.960358990530732,
+        "note": "no mechanism is named for `diauxic-order` \u2014 the policy's map has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "glucose-consumed",
+          "label": "Glucose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1
+        },
+        {
+          "id": "lactose-consumed",
+          "label": "Lactose is consumed",
+          "verdict": "within_tol",
+          "observed": 0.0,
+          "expected": "\u2264 0.1",
+          "margin": 0.1
+        },
+        {
+          "id": "growth",
+          "label": "Cell grows on BOTH substrates",
+          "verdict": "within_tol",
+          "observed": 9.5,
+          "expected": "\u2265 8.0",
+          "margin": 1.5000000000000036
+        },
+        {
+          "id": "diauxic-order",
+          "label": "Glucose is used up BEFORE lactose (sequential)",
+          "verdict": "mismatch",
+          "observed": 0.04,
+          "expected": "\u2265 7.0",
+          "margin": -6.960358990530732
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 3
+  }
+}
