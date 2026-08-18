@@ -1,0 +1,89 @@
+schema_version: 4
+name: bounded-cell
+investigation: agentic-challenges
+title: Bounded goal-directed cell
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: 'Build a bounded, goal-directed cell: on a finite nutrient pool and a rising temperature, produce
+  a cell whose BIOMASS grows on the nutrient it CONSUMES (mass-conserving, Monod-saturating GROWTH), and
+  whose VIABILITY holds while below its temperature tolerance then collapses once temperature exceeds
+  it.'
+behavior_tests:
+- name: growth
+  classification: primary
+  description: growth
+  measure:
+    observable: growth
+  pass_if:
+    op: ==
+    value: within_tol
+- name: nutrient-depletion
+  classification: primary
+  description: nutrient-depletion
+  measure:
+    observable: nutrient-depletion
+  pass_if:
+    op: ==
+    value: within_tol
+- name: conservation
+  classification: primary
+  description: conservation
+  measure:
+    observable: conservation
+  pass_if:
+    op: ==
+    value: within_tol
+- name: viability-cliff
+  classification: primary
+  description: viability-cliff
+  measure:
+    observable: viability-cliff
+  pass_if:
+    op: ==
+    value: within_tol
+- name: viability-in-band
+  classification: primary
+  description: viability-in-band
+  measure:
+    observable: viability-in-band
+  pass_if:
+    op: ==
+    value: within_tol
+- name: saturation
+  classification: primary
+  description: saturation
+  measure:
+    observable: saturation
+  pass_if:
+    op: ==
+    value: within_tol
+baseline:
+- name: final-model
+  module: null
+  domain: 'A process-bigraph Composite: TemperatureRamp + MonodUptake + YieldGrowth + ThermalDeath (t_tol=43
+    °C), wired over stores biomass/nutrient/viability/temperature/uptake_flux.'
+  params: {}
+runs:
+- name: bounded-cell-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/bounded-cell-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 4 edits
+biological_summary: 'A process-bigraph Composite: TemperatureRamp + MonodUptake + YieldGrowth + ThermalDeath
+  (t_tol=43 °C), wired over stores biomass/nutrient/viability/temperature/uptake_flux.'
+conclusion: '## Final model
+
+  A process-bigraph Composite: TemperatureRamp + MonodUptake + YieldGrowth + ThermalDeath (t_tol=43 °C),
+  wired over stores biomass/nutrient/viability/temperature/uptake_flux.
+
+
+  ## Result
+
+  DONE in 4 edits (LLM agent) — a real process-bigraph composite, integrity clean. The deterministic policy
+  also solved it in 5.'
+loop_provenance: bounded-cell-agent

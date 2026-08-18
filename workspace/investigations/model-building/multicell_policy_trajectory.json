@@ -1,0 +1,150 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "multicell",
+  "driver": "deterministic worst-margin policy",
+  "contract": "Produce a multicellular tissue with a spatial differentiation GRADIENT: cells near a signalling niche stay stem, and cells farther away differentiate \u2014 a tissue-scale phenotype, not a single-cell property.",
+  "tests": [
+    {
+      "id": "simulator-fit",
+      "label": "simulator-fit",
+      "expected": "within_tol"
+    },
+    {
+      "id": "multicellular",
+      "label": "multicellular",
+      "expected": "within_tol"
+    },
+    {
+      "id": "differentiation-gradient",
+      "label": "differentiation-gradient",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 3,
+      "decision": {
+        "kind": "install",
+        "mechanism": "wnt_field_niche",
+        "test": "multicellular"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "wnt_field_niche"
+      ],
+      "n_pass": 0,
+      "n_hard": 3,
+      "decision": {
+        "kind": "blocked",
+        "test": "simulator-fit",
+        "note": "no mechanism is named for `simulator-fit`/`differentiation-gradient`, and 'choose a simulator' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "wnt_field_niche"
+      ],
+      "n_pass": 0,
+      "n_hard": 3,
+      "decision": {
+        "kind": "blocked",
+        "test": "simulator-fit",
+        "note": "no mechanism is named for `simulator-fit`/`differentiation-gradient`, and 'choose a simulator' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 2
+  }
+}

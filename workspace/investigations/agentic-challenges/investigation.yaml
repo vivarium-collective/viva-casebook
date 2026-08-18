@@ -1,0 +1,15 @@
+schema_version: 2
+name: agentic-challenges
+title: Hard agentic-modeling challenges
+created: '2026-08-17'
+status: in_progress
+question: Which modeling tasks genuinely require an LLM agent — where a deterministic policy has no move
+  for the real fix — and can the agent build a passing process-bigraph model for them?
+hypothesis: As task complexity moves from calibration → regulatory coupling → simulator selection + subcellular
+  composition, the deterministic policy fails while an LLM agent reasons the fix.
+lead: 'A benchmark suite: each task is a real composite, graded by locked tests, with an LLM-vs-deterministic-policy
+  head-to-head. See docs/agentic-tasks-roadmap.md.'
+studies:
+- bounded-cell
+- diauxie
+- multicellular

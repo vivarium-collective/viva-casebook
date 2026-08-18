@@ -1,0 +1,67 @@
+schema_version: 4
+name: multicellular
+investigation: agentic-challenges
+title: Multicellular differentiation phenotype
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: 'Produce a multicellular tissue with a spatial differentiation gradient: cells near a signalling
+  niche stay stem, distal cells differentiate.'
+behavior_tests:
+- name: simulator-fit
+  classification: primary
+  description: The chosen simulator supports lattice + fields + cell fate
+  measure:
+    observable: simulator-fit
+  pass_if:
+    op: ==
+    value: within_tol
+- name: multicellular
+  classification: primary
+  description: A multicellular tissue (≥4 cells)
+  measure:
+    observable: multicellular
+  pass_if:
+    op: ==
+    value: within_tol
+- name: differentiation-gradient
+  classification: primary
+  description: Stem near the niche, differentiated distally
+  measure:
+    observable: differentiation-gradient
+  pass_if:
+    op: ==
+    value: within_tol
+baseline:
+- name: final-model
+  module: null
+  domain: 'A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the lattice,
+    a diffusing Wnt field, and a StemnessFate subcell reading each cell''s local Wnt to set its fate —
+    producing a spatial differentiation gradient.'
+  params: {}
+runs:
+- name: multicell-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/multicell-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 3 edits
+biological_summary: 'A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the
+  lattice, a diffusing Wnt field, and a StemnessFate subcell reading each cell''s local Wnt to set its
+  fate — producing a spatial differentiation gradient.'
+conclusion: '## Final model
+
+  A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the lattice, a diffusing
+  Wnt field, and a StemnessFate subcell reading each cell''s local Wnt to set its fate — producing a spatial
+  differentiation gradient.
+
+
+  ## Result
+
+  The phenotype (near STEM, far DIFFERENTIATED) is produced by the CPM composite. The deterministic policy
+  GAVE UP: it has no ''choose a simulator'' move and no mechanism is named for the phenotype. Selecting
+  CPM + composing the subcell is the LLM''s job.'
+loop_provenance: multicell-agent

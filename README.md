@@ -7,6 +7,7 @@ any single paper or model.
 
 > 🔁 **Flagship report — [the study-automation pipeline, end to end](https://vivarium-collective.github.io/viva-casebook/)**: one study driven through the whole model-building loop — contract → draft → tests → sufficiency audit → the *real, emergent* iteration trajectory from an inert draft to a model passing every test ([`docs/pipeline-report.html`](docs/pipeline-report.html)).
 > 🤖 Head-to-head — [**LLM agent vs deterministic policy**](docs/agent-vs-policy.html): the same study built two ways, an actual LLM reasoning over the margins beside a hand-coded rule, on the same real composite.
+> 🔬 And task #5 — [**Multicellular: the agent must choose a simulator**](docs/multicell-agent-vs-policy.html): the policy has no 'select simulator' move and gives up; the LLM picks CPM, composes a subcellular fate model, and produces a spatial differentiation gradient.
 > 🧫 And where it matters — [**Diauxie: a task the policy can't solve**](docs/diauxie-agent-vs-policy.html): the policy consumes both substrates but gets the *regulation* wrong and gives up at 3/4; the LLM reasons that the fix is catabolite repression and reaches 4/4.
 > 📊 Also: the [model-sourcing scorecard](docs/status.html).
 

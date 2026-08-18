@@ -1,0 +1,214 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "multicellular",
+  "driver": "LLM agent (Claude Sonnet) \u2014 selected the simulator + composed the subcell model",
+  "contract": "Produce a multicellular tissue with a spatial differentiation GRADIENT: cells near a signalling niche stay stem, and cells farther away differentiate \u2014 a tissue-scale phenotype, not a single-cell property.",
+  "tests": [
+    {
+      "id": "simulator-fit",
+      "label": "simulator-fit",
+      "expected": "within_tol"
+    },
+    {
+      "id": "multicellular",
+      "label": "multicellular",
+      "expected": "within_tol"
+    },
+    {
+      "id": "differentiation-gradient",
+      "label": "differentiation-gradient",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 3,
+      "agent_decision": {
+        "action": "select_simulator",
+        "value": "cpm",
+        "reasoning": "Only cpm supports lattice + morphogen fields + cell-fate relabeling, which the differentiation-gradient phenotype requires (pymunk has none; spatial has fields but no fate)."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "cpm"
+      ],
+      "n_pass": 1,
+      "n_hard": 3,
+      "agent_decision": {
+        "action": "add_component",
+        "value": "wnt_field_niche",
+        "reasoning": "The Wnt niche field must exist before per-cell fate can sense it, so add the niche/field first."
+      },
+      "newly_fixed": [
+        "simulator-fit"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "cpm",
+        "wnt_field_niche"
+      ],
+      "n_pass": 2,
+      "n_hard": 3,
+      "agent_decision": {
+        "action": "add_component",
+        "value": "stemness_fate_subcell",
+        "reasoning": "Cells need the subcellular fate model that reads local Wnt to relabel stem vs differentiated, producing the spatial gradient."
+      },
+      "newly_fixed": [
+        "multicellular"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "cpm",
+        "stemness_fate_subcell",
+        "wnt_field_niche"
+      ],
+      "n_pass": 3,
+      "n_hard": 3,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "All three tests pass \u2014 CPM with the niche field and the fate subcell produces the gradient."
+      },
+      "newly_fixed": [
+        "differentiation-gradient"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "simulator-fit",
+          "label": "simulator-fit",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "multicellular",
+          "label": "multicellular",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "differentiation-gradient",
+          "label": "differentiation-gradient",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 3,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}

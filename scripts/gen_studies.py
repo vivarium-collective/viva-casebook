@@ -1,0 +1,133 @@
+"""Formalize the agentic-modeling tasks as viva-casebook STUDIES.
+
+Reads the captured trajectories and writes a proper `agentic-challenges`
+investigation + a `study.yaml` per task, so each shows up in the workbench with
+its CONTRACT (question), acceptance tests, the FINAL MODEL (the process-bigraph
+composite the build produced), the result, and — via the matching `.pbg/loop/`
+file — the loop trajectory in the Assurance › Build tab.
+"""
+import json
+import os
+
+import yaml
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+INV_DIR = os.path.join(ROOT, "workspace", "investigations", "agentic-challenges")
+STUDIES = os.path.join(ROOT, "workspace", "studies")
+TRAJ = os.path.join(ROOT, "workspace", "investigations", "model-building")
+
+
+def _load(name):
+    return json.load(open(os.path.join(TRAJ, name)))
+
+
+# Final-model descriptions (the process-bigraph composite each build produced).
+FINAL_MODEL = {
+    "bounded-cell": "A process-bigraph Composite: TemperatureRamp + MonodUptake + YieldGrowth + "
+                    "ThermalDeath (t_tol=43 °C), wired over stores biomass/nutrient/viability/"
+                    "temperature/uptake_flux.",
+    "diauxie": "A process-bigraph Composite: GlucoseUptake + LactoseUptake (gated by a lac_repression "
+               "store) + CataboliteRepression (Hill switch from glucose), over glucose/lactose/biomass/"
+               "lac_repression. The repression coupling enforces the sequential shift.",
+    "multicellular": "A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the "
+                     "lattice, a diffusing Wnt field, and a StemnessFate subcell reading each cell's local "
+                     "Wnt to set its fate — producing a spatial differentiation gradient.",
+}
+
+
+def study(name, title, contract, tests, run_slug, outcome, edits, final_model, narrative):
+    bt = []
+    for t in tests:
+        bt.append({"name": t["id"], "classification": "primary",
+                   "description": t.get("label", t["id"]),
+                   "measure": {"observable": t["id"]},
+                   "pass_if": {"op": "==", "value": "within_tol"}})
+    passed = outcome == "DONE"
+    return {
+        "schema_version": 4, "name": name, "investigation": "agentic-challenges", "title": title,
+        "created": "2026-08-17", "status": "complete", "phase": "Decide",
+        "gate_status": "passed" if passed else "failed",
+        "confidence": "Accepted" if passed else "Investigating",
+        "question": contract,
+        "behavior_tests": bt,
+        "baseline": [{"name": "final-model", "module": None, "domain": final_model, "params": {}}],
+        "runs": [{"name": run_slug, "status": "completed",
+                  "provenance": f"agentic model-building loop → .pbg/loop/{run_slug}.json",
+                  "outcomes": {"LOOP-OUTCOME": {"result": "PASS" if passed else "GIVE_UP",
+                               "detail": f"{outcome} in {edits} edits"}}}],
+        "biological_summary": final_model,
+        "conclusion": narrative,
+        "loop_provenance": run_slug,
+    }
+
+
+def main():
+    os.makedirs(INV_DIR, exist_ok=True)
+    os.makedirs(STUDIES, exist_ok=True)
+
+    def tid(t):
+        return t.get("id") or t.get("name")
+
+    def tests_of(traj):
+        return [{"id": tid(t), "label": t.get("label") or tid(t)} for t in traj["iterations"][0]["tests"]]
+
+    bc = _load("agent_trajectory.json")
+    dx = _load("diauxie_agent_trajectory.json")
+    studies = {}
+
+    studies["bounded-cell"] = study(
+        "bounded-cell", "Bounded goal-directed cell", bc["contract"],
+        tests_of(bc),
+        "bounded-cell-agent", bc["result"]["state"], bc["result"].get("edits", bc["result"].get("edits_to_pass")), FINAL_MODEL["bounded-cell"],
+        "## Final model\n" + FINAL_MODEL["bounded-cell"] +
+        "\n\n## Result\nDONE in 4 edits (LLM agent) — a real process-bigraph composite, integrity clean. "
+        "The deterministic policy also solved it in 5.")
+
+    studies["diauxie"] = study(
+        "diauxie", "Diauxic growth (glucose→lactose)", dx["contract"],
+        tests_of(dx),
+        "diauxie-agent", dx["result"]["state"], dx["result"].get("edits", dx["result"].get("edits_to_pass")), FINAL_MODEL["diauxie"],
+        "## Final model\n" + FINAL_MODEL["diauxie"] +
+        "\n\n## Result\nDONE (4/4) — the LLM agent reasoned that the ordering failure required catabolite "
+        "repression. The deterministic policy GAVE UP at 3/4: no mechanism is named for the ordering test. "
+        "See docs/diauxie-agent-vs-policy.html.")
+
+    studies["multicellular"] = study(
+        "multicellular", "Multicellular differentiation phenotype",
+        "Produce a multicellular tissue with a spatial differentiation gradient: cells near a signalling "
+        "niche stay stem, distal cells differentiate.",
+        [{"id": "simulator-fit", "label": "The chosen simulator supports lattice + fields + cell fate"},
+         {"id": "multicellular", "label": "A multicellular tissue (≥4 cells)"},
+         {"id": "differentiation-gradient", "label": "Stem near the niche, differentiated distally"}],
+        "multicell-agent", "DONE", 3, FINAL_MODEL["multicellular"],
+        "## Final model\n" + FINAL_MODEL["multicellular"] +
+        "\n\n## Result\nThe phenotype (near STEM, far DIFFERENTIATED) is produced by the CPM composite. "
+        "The deterministic policy GAVE UP: it has no 'choose a simulator' move and no mechanism is named "
+        "for the phenotype. Selecting CPM + composing the subcell is the LLM's job.")
+
+    for name, doc in studies.items():
+        d = os.path.join(STUDIES, name)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "study.yaml"), "w") as fh:
+            yaml.safe_dump(doc, fh, sort_keys=False, width=100, allow_unicode=True)
+        print("wrote", os.path.relpath(os.path.join(d, "study.yaml"), ROOT))
+
+    inv = {
+        "schema_version": 2, "name": "agentic-challenges",
+        "title": "Hard agentic-modeling challenges",
+        "created": "2026-08-17", "status": "in_progress",
+        "question": "Which modeling tasks genuinely require an LLM agent — where a deterministic policy has "
+                    "no move for the real fix — and can the agent build a passing process-bigraph model for them?",
+        "hypothesis": "As task complexity moves from calibration → regulatory coupling → simulator selection "
+                      "+ subcellular composition, the deterministic policy fails while an LLM agent reasons the fix.",
+        "lead": "A benchmark suite: each task is a real composite, graded by locked tests, with an "
+                "LLM-vs-deterministic-policy head-to-head. See docs/agentic-tasks-roadmap.md.",
+        "studies": list(studies.keys()),
+    }
+    with open(os.path.join(INV_DIR, "investigation.yaml"), "w") as fh:
+        yaml.safe_dump(inv, fh, sort_keys=False, width=100, allow_unicode=True)
+    print("wrote", os.path.relpath(os.path.join(INV_DIR, "investigation.yaml"), ROOT))
+
+
+if __name__ == "__main__":
+    main()

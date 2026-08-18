@@ -1,0 +1,75 @@
+schema_version: 4
+name: diauxie
+investigation: agentic-challenges
+title: Diauxic growth (glucose→lactose)
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: 'Build a cell that grows on a mixture of glucose and lactose with the DIAUXIC phenotype: it
+  consumes glucose first, and only once glucose is exhausted does it switch to lactose — a sequential
+  shift, not simultaneous co-consumption.'
+behavior_tests:
+- name: glucose-consumed
+  classification: primary
+  description: Glucose is consumed
+  measure:
+    observable: glucose-consumed
+  pass_if:
+    op: ==
+    value: within_tol
+- name: lactose-consumed
+  classification: primary
+  description: Lactose is consumed
+  measure:
+    observable: lactose-consumed
+  pass_if:
+    op: ==
+    value: within_tol
+- name: growth
+  classification: primary
+  description: Cell grows on BOTH substrates
+  measure:
+    observable: growth
+  pass_if:
+    op: ==
+    value: within_tol
+- name: diauxic-order
+  classification: primary
+  description: Glucose is used up BEFORE lactose (sequential)
+  measure:
+    observable: diauxic-order
+  pass_if:
+    op: ==
+    value: within_tol
+baseline:
+- name: final-model
+  module: null
+  domain: 'A process-bigraph Composite: GlucoseUptake + LactoseUptake (gated by a lac_repression store)
+    + CataboliteRepression (Hill switch from glucose), over glucose/lactose/biomass/lac_repression. The
+    repression coupling enforces the sequential shift.'
+  params: {}
+runs:
+- name: diauxie-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/diauxie-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 3 edits
+biological_summary: 'A process-bigraph Composite: GlucoseUptake + LactoseUptake (gated by a lac_repression
+  store) + CataboliteRepression (Hill switch from glucose), over glucose/lactose/biomass/lac_repression.
+  The repression coupling enforces the sequential shift.'
+conclusion: '## Final model
+
+  A process-bigraph Composite: GlucoseUptake + LactoseUptake (gated by a lac_repression store) + CataboliteRepression
+  (Hill switch from glucose), over glucose/lactose/biomass/lac_repression. The repression coupling enforces
+  the sequential shift.
+
+
+  ## Result
+
+  DONE (4/4) — the LLM agent reasoned that the ordering failure required catabolite repression. The deterministic
+  policy GAVE UP at 3/4: no mechanism is named for the ordering test. See docs/diauxie-agent-vs-policy.html.'
+loop_provenance: diauxie-agent
