@@ -32,6 +32,10 @@ FINAL_MODEL = {
     "multicellular": "A CPM (viva-cpm) tissue Composite: a Wnt-secreting niche + progenitor cells on the "
                      "lattice, a diffusing Wnt field, and a StemnessFate subcell reading each cell's local "
                      "Wnt to set its fate — producing a spatial differentiation gradient.",
+    "multiscale": "A two-scale process-bigraph Composite: CellMetabolism (a cell secreting a metabolite "
+                  "flux, mol/time) + DiffusionField (a 1-D concentration field, mM) coupled by a "
+                  "FluxTranslator that maps the cell's flux to the field's per-grid source with the "
+                  "unit conversion (÷volume) that conserves mass across the scale interface.",
 }
 
 
@@ -104,6 +108,17 @@ def main():
         "\n\n## Result\nThe phenotype (near STEM, far DIFFERENTIATED) is produced by the CPM composite. "
         "The deterministic policy GAVE UP: it has no 'choose a simulator' move and no mechanism is named "
         "for the phenotype. Selecting CPM + composing the subcell is the LLM's job.")
+
+    ms = _load("multiscale_agent_trajectory.json")
+    studies["multiscale"] = study(
+        "multiscale", "Multiscale coupling via a translator", ms["contract"],
+        tests_of(ms), "multiscale-agent", ms["result"]["state"],
+        ms["result"].get("edits", ms["result"].get("edits_to_pass")), FINAL_MODEL["multiscale"],
+        "## Final model\n" + FINAL_MODEL["multiscale"] +
+        "\n\n## Result\nDONE (4/4) — the LLM agent recognised the two models were decoupled and AUTHORED a "
+        "translator, reasoning the unit conversion (mol/time → mM/time over the compartment volume) needed to "
+        "conserve mass. The deterministic policy GAVE UP at 1/4: 'author a translator' is not an install it "
+        "can express. See docs/multiscale-agent-vs-policy.html.")
 
     for name, doc in studies.items():
         d = os.path.join(STUDIES, name)

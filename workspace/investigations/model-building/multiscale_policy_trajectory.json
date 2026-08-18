@@ -1,0 +1,232 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "multiscale",
+  "driver": "deterministic worst-margin policy",
+  "contract": "Couple a cell-scale metabolic model (which produces a metabolite FLUX) to a tissue-scale spatial DIFFUSION FIELD of that metabolite, so that the cell's secretion sources the field and a gradient forms around the cell \u2014 with mass conserved across the scale interface.",
+  "tests": [
+    {
+      "id": "cell-active",
+      "label": "cell-active",
+      "expected": "within_tol"
+    },
+    {
+      "id": "field-active",
+      "label": "field-active",
+      "expected": "within_tol"
+    },
+    {
+      "id": "coupled-gradient",
+      "label": "coupled-gradient",
+      "expected": "within_tol"
+    },
+    {
+      "id": "flux-conserved",
+      "label": "flux-conserved",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 1,
+      "n_hard": 4,
+      "decision": {
+        "kind": "install",
+        "mechanism": "cell_metabolism",
+        "test": "cell-active"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "cell_metabolism"
+      ],
+      "n_pass": 1,
+      "n_hard": 4,
+      "decision": {
+        "kind": "install",
+        "mechanism": "diffusion_field",
+        "test": "field-active"
+      },
+      "newly_fixed": [
+        "cell-active"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "cell_metabolism",
+        "diffusion_field"
+      ],
+      "n_pass": 1,
+      "n_hard": 4,
+      "decision": {
+        "kind": "blocked",
+        "test": "field-active",
+        "note": "no mechanism is named for `coupled-gradient`/`flux-conserved`, and 'author a translator between the two scales' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "cell_metabolism",
+        "diffusion_field"
+      ],
+      "n_pass": 1,
+      "n_hard": 4,
+      "decision": {
+        "kind": "blocked",
+        "test": "field-active",
+        "note": "no mechanism is named for `coupled-gradient`/`flux-conserved`, and 'author a translator between the two scales' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 3
+  }
+}

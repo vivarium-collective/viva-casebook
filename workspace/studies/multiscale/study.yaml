@@ -1,0 +1,75 @@
+schema_version: 4
+name: multiscale
+investigation: agentic-challenges
+title: Multiscale coupling via a translator
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Couple a cell-scale metabolic model (which produces a metabolite FLUX) to a tissue-scale spatial
+  DIFFUSION FIELD of that metabolite, so that the cell's secretion sources the field and a gradient forms
+  around the cell — with mass conserved across the scale interface.
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.multiscale
+  params: {}
+behavior_tests:
+- name: cell-active
+  classification: primary
+  description: cell-active
+  measure:
+    observable: cell-active
+  pass_if:
+    op: ==
+    value: within_tol
+- name: field-active
+  classification: primary
+  description: field-active
+  measure:
+    observable: field-active
+  pass_if:
+    op: ==
+    value: within_tol
+- name: coupled-gradient
+  classification: primary
+  description: coupled-gradient
+  measure:
+    observable: coupled-gradient
+  pass_if:
+    op: ==
+    value: within_tol
+- name: flux-conserved
+  classification: primary
+  description: flux-conserved
+  measure:
+    observable: flux-conserved
+  pass_if:
+    op: ==
+    value: within_tol
+runs:
+- name: multiscale-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/multiscale-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 3 edits
+biological_summary: 'A two-scale process-bigraph Composite: CellMetabolism (a cell secreting a metabolite
+  flux, mol/time) + DiffusionField (a 1-D concentration field, mM) coupled by a FluxTranslator that maps
+  the cell''s flux to the field''s per-grid source with the unit conversion (÷volume) that conserves mass
+  across the scale interface.'
+conclusion: '## Final model
+
+  A two-scale process-bigraph Composite: CellMetabolism (a cell secreting a metabolite flux, mol/time)
+  + DiffusionField (a 1-D concentration field, mM) coupled by a FluxTranslator that maps the cell''s flux
+  to the field''s per-grid source with the unit conversion (÷volume) that conserves mass across the scale
+  interface.
+
+
+  ## Result
+
+  DONE (4/4) — the LLM agent recognised the two models were decoupled and AUTHORED a translator, reasoning
+  the unit conversion (mol/time → mM/time over the compartment volume) needed to conserve mass. The deterministic
+  policy GAVE UP at 1/4: ''author a translator'' is not an install it can express. See docs/multiscale-agent-vs-policy.html.'
+loop_provenance: multiscale-agent

@@ -1,0 +1,256 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "multiscale",
+  "driver": "LLM agent (Claude Sonnet) \u2014 authored the translator + reasoned the unit conversion",
+  "contract": "Couple a cell-scale metabolic model (which produces a metabolite FLUX) to a tissue-scale spatial DIFFUSION FIELD of that metabolite, so that the cell's secretion sources the field and a gradient forms around the cell \u2014 with mass conserved across the scale interface.",
+  "tests": [
+    {
+      "id": "cell-active",
+      "label": "cell-active",
+      "expected": "within_tol"
+    },
+    {
+      "id": "field-active",
+      "label": "field-active",
+      "expected": "within_tol"
+    },
+    {
+      "id": "coupled-gradient",
+      "label": "coupled-gradient",
+      "expected": "within_tol"
+    },
+    {
+      "id": "flux-conserved",
+      "label": "flux-conserved",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 1,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "value": "cell_metabolism",
+        "reasoning": "Start with the cell-scale source model before anything can secrete."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "cell_metabolism"
+      ],
+      "n_pass": 1,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "install",
+        "value": "diffusion_field",
+        "reasoning": "The tissue-scale field must exist before it can respond."
+      },
+      "newly_fixed": [
+        "cell-active"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "cell_metabolism",
+        "diffusion_field"
+      ],
+      "n_pass": 1,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "author_translator",
+        "value": "flux_translator",
+        "unit_conversion": true,
+        "reasoning": "The two models are unconnected until a translator maps secretion_flux to field_source; units differ (mol/time vs mM/time over volume V=2.0) so the conversion must be applied for mass to conserve across the interface."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "active": [
+        "cell_metabolism",
+        "diffusion_field",
+        "flux_translator"
+      ],
+      "n_pass": 4,
+      "n_hard": 4,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "All four tests pass \u2014 the translator couples the two scales and conserves mass."
+      },
+      "newly_fixed": [
+        "field-active",
+        "coupled-gradient",
+        "flux-conserved"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "cell-active",
+          "label": "cell-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "field-active",
+          "label": "field-active",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "coupled-gradient",
+          "label": "coupled-gradient",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "flux-conserved",
+          "label": "flux-conserved",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 3,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}
