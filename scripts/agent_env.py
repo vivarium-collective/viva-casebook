@@ -124,6 +124,32 @@ def main():
         print(json.dumps(out, indent=2))
         return
 
+    # AUTHOR-phase task: the agent authors its own tests → audit → lock → build.
+    if task == "author-tests":
+        import author_tests_task as AT
+
+        def _payload():
+            arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
+            return json.loads(arg) if arg.strip() else {}
+        if cmd == "card":
+            out = {"contract": AT.QUESTION, "observables": AT.OBSERVABLES,
+                   "how": "1) AUTHOR tests: call `audit` with {\"tests\":[{\"name\":..,\"observable\":one of "
+                          + str(AT.OBSERVABLES) + ",\"op\":\">=\"|\"<=\",\"value\":n}]}. The audit RUNS "
+                          "degenerate models (collapse-to-0, blow-up, wrong-target) and tells you which slip "
+                          "through — revise until sufficient. 2) `lock` the same tests (gated on the audit). "
+                          "3) `build` with {\"code\": <a Process, as in the author task>} — it is graded "
+                          "against your LOCKED tests."}
+        elif cmd == "audit":
+            out = AT.audit(_payload().get("tests"))
+        elif cmd == "lock":
+            out = AT.lock(_payload().get("tests"))
+        elif cmd == "build":
+            out = AT.build(_payload().get("code", ""))
+        else:
+            raise SystemExit("use 'card' | 'audit' | 'lock' | 'build'")
+        print(json.dumps(out, indent=2))
+        return
+
     # open-action-space task: the agent AUTHORS a Process (sandboxed), no menu.
     if task == "author":
         import author_task as A

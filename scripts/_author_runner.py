@@ -49,14 +49,18 @@ def main():
                       "inputs": {"X": ["X"]}, "outputs": {"X": ["X"]}, "interval": dt}}
     try:
         comp = Composite({"state": state}, core=core)
-        comp.run(dur)
-        xf = float(comp.state["X"])
+        trace = []
+        steps = max(1, int(round(dur / dt)))
+        for _ in range(steps):
+            comp.run(dt)
+            trace.append(round(float(comp.state["X"]), 5))
+        xf = trace[-1] if trace else 0.0
     except Exception as e:                   # noqa: BLE001
         _fail(f"run failed: {type(e).__name__}: {e}")
 
     tol = max(0.1, 0.05 * abs(target))
     print(json.dumps({"ok": True, "X_final": round(xf, 4), "target": target,
-                      "matched": abs(xf - target) < tol}))
+                      "matched": abs(xf - target) < tol, "trace": trace}))
 
 
 if __name__ == "__main__":

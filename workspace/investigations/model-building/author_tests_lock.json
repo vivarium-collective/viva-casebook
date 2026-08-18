@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "final_near_target_low",
+      "observable": "final",
+      "op": ">=",
+      "value": 4.5
+    },
+    {
+      "name": "final_near_target_high",
+      "observable": "final",
+      "op": "<=",
+      "value": 5.5
+    }
+  ],
+  "tests_hash": "sha256:f5493ddd5d97edd52dd0c0bdb293cbf82e647d87a9d65b611ba566ab0d28f892"
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "author-phase (question->AUTHOR->AUDIT->LOCK->BUILD)",
+  "model": "claude-sonnet-4-5 (live)",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py author-tests",
+  "audit_is_executable": "the AUDIT runs degenerate null models (collapse-to-zero, blow-up, wrong-target) and checks the authored tests reject them \u2014 not a classification label or an LLM promise (Fable #5)",
+  "audit_catches_insufficiency_demo": {
+    "naive_tests": [
+      {
+        "name": "reaches",
+        "observable": "final",
+        "op": ">=",
+        "value": 4
+      }
+    ],
+    "audit_sufficient": false,
+    "degenerate_models_that_slip_through": [
+      "blow_up",
+      "wrong_target_100"
+    ],
+    "note": "A single lower-bound test lets blow-up and wrong-target models pass; the audit flags them, so it cannot be locked."
+  },
+  "live_full_cycle": {
+    "authored_tests": [
+      {
+        "name": "final_near_target_low",
+        "observable": "final",
+        "op": ">=",
+        "value": 4.5
+      },
+      {
+        "name": "final_near_target_high",
+        "observable": "final",
+        "op": "<=",
+        "value": 5.5
+      }
+    ],
+    "audit_sufficient": true,
+    "locked": true,
+    "built_process": "RelaxationToTargetProcess \u2014 first-order relaxation dX=k*(target-X), cited",
+    "build_all_pass": true,
+    "agent_reasoning": "Bracketed the target tightly on `final` (>=4.5 and <=5.5), which the audit confirmed excludes collapse-to-0 (fails lower), blow-up and wrong-target (fail upper). Locked, then authored a first-order relaxation Process that converges boundedly to 5 -> all_pass."
+  },
+  "summary": {
+    "note": "The agent ran the full loop and authored SUFFICIENT tests first try (audit confirmed); the audit's catch capability is shown separately on a naive test. Lock is a real pre-registration (loop_state hash)."
+  }
+}
