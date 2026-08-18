@@ -1,0 +1,33 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "biomodels-repair",
+  "model": "claude-sonnet-4-5 (live)",
+  "substrate": "Elowitz 2000 repressilator (BioModels) via COPASI/basico \u2014 objective ground truth is the intact reference model, not an author-set band",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py repair",
+  "runs": [
+    {
+      "run_index": 0,
+      "state": "DONE",
+      "edits": 1,
+      "n_steps": 1,
+      "steps": [
+        {
+          "param": "n",
+          "value": 2,
+          "rmsd_vs_reference": 0.0,
+          "matched": true,
+          "reasoning": "Cross-checked the parameter table for internal consistency: kd_mRNA=ln(2)/mRNA_half_life and kd_prot=ln(2)/protein_half_life both self-consistent; three independent leakiness ratios (alpha0/alpha etc.) agree at ~0.001 \u2014 none tampered. n=1.0 was the only parameter with no corroborating derived value AND the classic repressilator knob: the alpha=216/beta=0.2 regime needs cooperative repression (n=2) to cross the Hopf bifurcation into sustained oscillation; n=1 collapses the limit cycle. Set n=2."
+        }
+      ],
+      "final_note": "Broken parameter was the Hill coefficient n (2\u21921); diagnosed by internal-redundancy checks on all other params + the repressilator's need for cooperativity. Restoring n=2 dropped rmsd 0.307\u21920.0."
+    }
+  ],
+  "summary": {
+    "n_runs": 1,
+    "n_done": 1,
+    "pass_rate": 1.0,
+    "edits_when_done": [
+      1
+    ]
+  }
+}

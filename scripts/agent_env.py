@@ -96,6 +96,30 @@ def main():
     if len(sys.argv) < 3:
         raise SystemExit(__doc__)
     task, cmd = sys.argv[1], sys.argv[2]
+
+    # data-grounded BioModels break-and-repair task: different action shape
+    # (repair a parameter) and observation (the divergence from the reference model)
+    if task == "repair":
+        import biomodels_repair_task as R
+        if cmd == "card":
+            bs = R.broken_state()
+            out = {"contract": "A curated BioModels model (Elowitz 2000 repressilator) no longer "
+                   "reproduces its REFERENCE time-course because one kinetic parameter was changed. "
+                   "Diagnose which parameter is wrong and repair it — set it to a value that restores "
+                   "the reference behaviour (rmsd_vs_reference below tolerance). The reference model is "
+                   "the ground truth; there is no author-set band.",
+                   "parameters": bs["parameters"], "rmsd_vs_reference": bs["rmsd_vs_reference"],
+                   "how": "Call `step` with {\"param\": name, \"value\": number} to set a parameter and "
+                          "see the new rmsd_vs_reference (matched=true when it drops below tolerance)."}
+        elif cmd == "step":
+            arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
+            req = json.loads(arg) if arg.strip() else {}
+            out = R.repair(req.get("param"), req.get("value"))
+        else:
+            raise SystemExit("use 'card' or 'step'")
+        print(json.dumps(out, indent=2))
+        return
+
     contract, mechs, step = env_for(task)
     if cmd == "card":
         out = {"contract": contract,
