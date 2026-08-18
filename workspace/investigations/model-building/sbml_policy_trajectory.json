@@ -1,0 +1,149 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "sbml",
+  "driver": "deterministic worst-margin policy",
+  "contract": "Build an SBML kinetic model of a linear metabolic pathway A\u2192B\u2192C that COPASI can load and simulate to a valid steady state, with total mass conserved and the terminal product C accumulating as the dominant species.",
+  "tests": [
+    {
+      "id": "sbml-valid",
+      "label": "sbml-valid",
+      "expected": "within_tol"
+    },
+    {
+      "id": "copasi-loads",
+      "label": "copasi-loads",
+      "expected": "within_tol"
+    },
+    {
+      "id": "steady-state",
+      "label": "steady-state",
+      "expected": "within_tol"
+    },
+    {
+      "id": "mass-conserved",
+      "label": "mass-conserved",
+      "expected": "within_tol"
+    },
+    {
+      "id": "terminal-product",
+      "label": "terminal-product",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 5,
+      "decision": {
+        "kind": "blocked",
+        "test": "sbml-valid",
+        "note": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "sbml-valid",
+          "label": "sbml-valid",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "copasi-loads",
+          "label": "copasi-loads",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "steady-state",
+          "label": "steady-state",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "mass-conserved",
+          "label": "mass-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "terminal-product",
+          "label": "terminal-product",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 5,
+      "decision": {
+        "kind": "blocked",
+        "test": "sbml-valid",
+        "note": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "sbml-valid",
+          "label": "sbml-valid",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "copasi-loads",
+          "label": "copasi-loads",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "steady-state",
+          "label": "steady-state",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "mass-conserved",
+          "label": "mass-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        },
+        {
+          "id": "terminal-product",
+          "label": "terminal-product",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 1
+  }
+}

@@ -13,4 +13,5 @@ studies:
 - bounded-cell
 - diauxie
 - multicellular
+- sbml
 - multiscale

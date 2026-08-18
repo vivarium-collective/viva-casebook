@@ -1,0 +1,233 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "sbml",
+  "driver": "LLM agent (Claude Sonnet) \u2014 authored the SBML reaction network, graded in real COPASI",
+  "contract": "Build an SBML kinetic model of a linear metabolic pathway A\u2192B\u2192C that COPASI can load and simulate to a valid steady state, with total mass conserved and the terminal product C accumulating as the dominant species.",
+  "tests": [
+    {
+      "id": "sbml-valid",
+      "label": "sbml-valid",
+      "expected": "within_tol"
+    },
+    {
+      "id": "copasi-loads",
+      "label": "copasi-loads",
+      "expected": "within_tol"
+    },
+    {
+      "id": "steady-state",
+      "label": "steady-state",
+      "expected": "within_tol"
+    },
+    {
+      "id": "mass-conserved",
+      "label": "mass-conserved",
+      "expected": "within_tol"
+    },
+    {
+      "id": "terminal-product",
+      "label": "terminal-product",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "add_reaction",
+        "value": "A->B",
+        "reasoning": "Start the pathway by converting A to B, the first required step before B can flow to C."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "sbml-valid",
+          "label": "sbml-valid",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "copasi-loads",
+          "label": "copasi-loads",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "steady-state",
+          "label": "steady-state",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "mass-conserved",
+          "label": "mass-conserved",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "terminal-product",
+          "label": "terminal-product",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "A->B"
+      ],
+      "n_pass": 4,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "add_reaction",
+        "value": "B->C",
+        "reasoning": "A\u2192B alone leaves B as the terminal species; add B\u2192C so the terminal product C accumulates."
+      },
+      "newly_fixed": [
+        "sbml-valid",
+        "copasi-loads",
+        "steady-state",
+        "mass-conserved"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "sbml-valid",
+          "label": "sbml-valid",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "copasi-loads",
+          "label": "copasi-loads",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "steady-state",
+          "label": "steady-state",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "mass-conserved",
+          "label": "mass-conserved",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "terminal-product",
+          "label": "terminal-product",
+          "verdict": "mismatch",
+          "observed": "mismatch",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "A->B",
+        "B->C"
+      ],
+      "n_pass": 5,
+      "n_hard": 5,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "All five quality tests pass \u2014 COPASI loads the model, it reaches a valid steady state, mass is conserved, and C is the accumulating terminal product."
+      },
+      "newly_fixed": [
+        "terminal-product"
+      ],
+      "regressed": [],
+      "tests": [
+        {
+          "id": "sbml-valid",
+          "label": "sbml-valid",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "copasi-loads",
+          "label": "copasi-loads",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "steady-state",
+          "label": "steady-state",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "mass-conserved",
+          "label": "mass-conserved",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        },
+        {
+          "id": "terminal-product",
+          "label": "terminal-product",
+          "verdict": "within_tol",
+          "observed": "within_tol",
+          "expected": "within_tol",
+          "margin": null,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 2,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}

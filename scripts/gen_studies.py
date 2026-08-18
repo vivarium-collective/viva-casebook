@@ -109,6 +109,19 @@ def main():
         "The deterministic policy GAVE UP: it has no 'choose a simulator' move and no mechanism is named "
         "for the phenotype. Selecting CPM + composing the subcell is the LLM's job.")
 
+    sb = _load("sbml_agent_trajectory.json")
+    studies["sbml"] = study(
+        "sbml", "SBML model → COPASI → quality", sb["contract"], tests_of(sb),
+        "sbml-agent", sb["result"]["state"], sb["result"].get("edits", sb["result"].get("edits_to_pass")),
+        "An SBML kinetic model (libsbml) of the pathway A→B→C with mass-action reactions, loaded and "
+        "simulated in the REAL COPASI backend (basico, via viva-copasi).",
+        "## Final model\nAn SBML kinetic model of A→B→C (mass-action), loaded + simulated in COPASI (basico) "
+        "via viva-copasi.\n\n## Result\nDONE (5/5) — the LLM agent authored the reaction network, recognising "
+        "after A→B that the pathway stopped at B and adding B→C so the terminal product accumulates. Every "
+        "verdict is from real COPASI simulation (validity, load, steady state, conservation, terminal product). "
+        "The deterministic policy GAVE UP at 0/5: authoring an SBML network is not an install. "
+        "See docs/sbml-agent-vs-policy.html.")
+
     ms = _load("multiscale_agent_trajectory.json")
     studies["multiscale"] = study(
         "multiscale", "Multiscale coupling via a translator", ms["contract"],

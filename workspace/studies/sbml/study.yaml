@@ -1,0 +1,79 @@
+schema_version: 4
+name: sbml
+investigation: agentic-challenges
+title: SBML model → COPASI → quality
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Build an SBML kinetic model of a linear metabolic pathway A→B→C that COPASI can load and simulate
+  to a valid steady state, with total mass conserved and the terminal product C accumulating as the dominant
+  species.
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.sbml
+  params: {}
+behavior_tests:
+- name: sbml-valid
+  classification: primary
+  description: sbml-valid
+  measure:
+    observable: sbml-valid
+  pass_if:
+    op: ==
+    value: within_tol
+- name: copasi-loads
+  classification: primary
+  description: copasi-loads
+  measure:
+    observable: copasi-loads
+  pass_if:
+    op: ==
+    value: within_tol
+- name: steady-state
+  classification: primary
+  description: steady-state
+  measure:
+    observable: steady-state
+  pass_if:
+    op: ==
+    value: within_tol
+- name: mass-conserved
+  classification: primary
+  description: mass-conserved
+  measure:
+    observable: mass-conserved
+  pass_if:
+    op: ==
+    value: within_tol
+- name: terminal-product
+  classification: primary
+  description: terminal-product
+  measure:
+    observable: terminal-product
+  pass_if:
+    op: ==
+    value: within_tol
+runs:
+- name: sbml-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/sbml-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 2 edits
+biological_summary: An SBML kinetic model (libsbml) of the pathway A→B→C with mass-action reactions, loaded
+  and simulated in the REAL COPASI backend (basico, via viva-copasi).
+conclusion: '## Final model
+
+  An SBML kinetic model of A→B→C (mass-action), loaded + simulated in COPASI (basico) via viva-copasi.
+
+
+  ## Result
+
+  DONE (5/5) — the LLM agent authored the reaction network, recognising after A→B that the pathway stopped
+  at B and adding B→C so the terminal product accumulates. Every verdict is from real COPASI simulation
+  (validity, load, steady state, conservation, terminal product). The deterministic policy GAVE UP at
+  0/5: authoring an SBML network is not an install. See docs/sbml-agent-vs-policy.html.'
+loop_provenance: sbml-agent

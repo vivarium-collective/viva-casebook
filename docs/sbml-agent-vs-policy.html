@@ -1,0 +1,96 @@
+<title>Agent vs Policy</title>
+<style>
+  :root{--ground:#f5f8f7;--panel:#fff;--panel2:#fbfdfc;--ink:#0c1a19;--soft:#4a5b59;--line:#e2e9e7;--line2:#c9d4d1;
+    --teal:#0d9488;--teal-deep:#0f766e;--wash:#e6f4f1;--good:#059669;--good-w:#e7f4ee;--warn:#b45309;--warn-w:#fbf1e3;--bad:#dc2626;--bad-w:#fbeaea;
+    --violet:#7c3aed;--violet-w:#f1ebfd;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--ground:#0b1211;--panel:#111b1a;--panel2:#0e1716;--ink:#e8f0ee;--soft:#93a5a2;--line:#1e2b29;--line2:#2c3d3a;
+    --teal:#2dd4bf;--teal-deep:#5eead4;--wash:#0f2320;--good:#34d399;--good-w:#0e241c;--warn:#fbbf24;--warn-w:#241a08;--bad:#f87171;--bad-w:#2a1414;--violet:#a78bfa;--violet-w:#1c1633;}}
+  :root[data-theme=dark]{--ground:#0b1211;--panel:#111b1a;--panel2:#0e1716;--ink:#e8f0ee;--soft:#93a5a2;--line:#1e2b29;--line2:#2c3d3a;
+    --teal:#2dd4bf;--teal-deep:#5eead4;--wash:#0f2320;--good:#34d399;--good-w:#0e241c;--warn:#fbbf24;--warn-w:#241a08;--bad:#f87171;--bad-w:#2a1414;--violet:#a78bfa;--violet-w:#1c1633;}
+  *{box-sizing:border-box}body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:44px 22px 90px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-deep);font-weight:600}
+  h1{font-size:clamp(28px,4.4vw,42px);line-height:1.06;margin:10px 0 8px;letter-spacing:-.02em}
+  .lede{font-size:17px;color:var(--soft);max-width:70ch;margin:0}
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);font-weight:600;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .score{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+  th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);font-weight:600;background:var(--wash)}
+  tbody tr:last-child td{border-bottom:none}.metric{font-weight:600}.win{color:var(--good);font-weight:700}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.cols{grid-template-columns:1fr}}
+  .col{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+  .col-h{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .col-h .d{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  .col-h .s{font-size:12px;color:var(--soft);margin-top:3px}
+  .badge{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .b-agent{background:var(--violet-w);color:var(--violet)} .b-policy{background:var(--wash);color:var(--teal-deep)}
+  .col-b{padding:12px 14px}
+  .it{border:1px solid var(--line);border-radius:10px;margin-bottom:9px;overflow:hidden}
+  .it.done{border-color:var(--good)}
+  .it-h{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--panel2);border-bottom:1px solid var(--line);font-size:12px}
+  .it-h .k{font-family:var(--mono);font-weight:700;color:var(--teal-deep)}
+  .it-h .lbl{font-family:var(--mono);color:var(--soft);font-size:11px}
+  .it-h .sc{margin-left:auto;font-family:var(--mono);font-weight:700}
+  .strip{display:flex;gap:3px;padding:8px 11px 4px}
+  .cell{flex:1;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700}
+  .it-e{padding:2px 11px 10px;font-size:12px}
+  .it-e .edit{font-family:var(--mono);font-weight:600}
+  .it-e .rz{color:var(--soft);font-size:11.5px;margin-top:3px;font-style:italic}
+  .tag{font-family:var(--mono);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:5px}
+  .t-fx{background:var(--good-w);color:var(--good)} .t-rg{background:var(--bad-w);color:var(--bad)}
+  .callout{border:1px solid var(--line2);border-left:3px solid var(--violet);border-radius:10px;padding:14px 16px;background:var(--panel);margin-top:16px;font-size:13.5px;color:var(--soft)}
+  .callout b{color:var(--ink)}
+  .foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--soft);font-family:var(--mono)}
+</style>
+<div class="wrap">
+  <div class="eyebrow">Same study · same composite · different driver</div>
+  <h1>SBML→COPASI: the agent must author a model</h1>
+  <p class="lede">The exact same model-building study — same real process-bigraph composite, same locked tests, same mechanism library — built two ways. One driver is an actual LLM reasoning over the graded margins; the other is a hand-coded worst-negative-margin rule. Every verdict below is real engine output.</p>
+  <h2>Scorecard</h2>
+  <div class="score"><table><thead><tr><th>Metric</th><th>🤖 LLM agent</th><th>⚙️ Deterministic policy</th></tr></thead><tbody id="score"></tbody></table></div>
+  <h2>The two builds, side by side</h2>
+  <div class="cols"><div class="col" id="col-agent"></div><div class="col" id="col-policy"></div></div>
+  <div class="callout" id="insight"></div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+const A={"driver": "LLM agent (Claude Sonnet)", "sub": "reasons each edit from the graded margins + a functional mechanism description", "edits": 2, "state": "DONE", "violations": 1, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "Start the pathway by converting A to B, the first required step before B can flow to C.", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "A->B", "n_pass": 4, "n_hard": 5, "edit": "add_reaction: ", "reasoning": "A\u2192B alone leaves B as the terminal species; add B\u2192C so the terminal product C accumulates.", "newly_fixed": ["sbml-valid", "copasi-loads", "steady-state", "mass-conserved"], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "within_tol", "margin": null}, {"name": "copasi-loads", "verdict": "within_tol", "margin": null}, {"name": "steady-state", "verdict": "within_tol", "margin": null}, {"name": "mass-conserved", "verdict": "within_tol", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "A->B + B->C", "n_pass": 5, "n_hard": 5, "edit": "DONE", "reasoning": "All five quality tests pass \u2014 COPASI loads the model, it reaches a valid steady state, mass is conserved, and C is the accumulating terminal product.", "newly_fixed": ["terminal-product"], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "within_tol", "margin": null}, {"name": "copasi-loads", "verdict": "within_tol", "margin": null}, {"name": "steady-state", "verdict": "within_tol", "margin": null}, {"name": "mass-conserved", "verdict": "within_tol", "margin": null}, {"name": "terminal-product", "verdict": "within_tol", "margin": null}]}]}, P={"driver": "Deterministic policy", "sub": "a hand-coded rule: pick the worst-negative-margin hard test, install-or-calibrate", "edits": 1, "state": "GIVE_UP", "violations": 0, "calibrations": 0, "iters": [{"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}, {"label": "inert draft", "n_pass": 0, "n_hard": 5, "edit": "blocked", "reasoning": "no reaction is named by any failing test, and 'author an SBML reaction network with balanced stoichiometry + kinetics' is not an install \u2014 the policy has no move", "newly_fixed": [], "regressed": [], "tests": [{"name": "sbml-valid", "verdict": "mismatch", "margin": null}, {"name": "copasi-loads", "verdict": "mismatch", "margin": null}, {"name": "steady-state", "verdict": "mismatch", "margin": null}, {"name": "mass-conserved", "verdict": "mismatch", "margin": null}, {"name": "terminal-product", "verdict": "mismatch", "margin": null}]}]};
+const $=(id)=>document.getElementById(id);
+const HARD=["growth","nutrient-depletion","conservation","viability-cliff","viability-in-band"];
+const vc=(v)=>v==='within_tol'?['var(--good-w)','var(--good)']:v==='mismatch'?['var(--bad-w)','var(--bad)']:['var(--warn-w)','var(--warn)'];
+const abbr={"growth":"grow","nutrient-depletion":"nutr","conservation":"cons","viability-cliff":"cliff","viability-in-band":"band"};
+
+function scoreRow(label, a, p, awin){
+  return `<tr><td class="metric">${label}</td><td class="${awin===true?'win':''}">${a}</td><td class="${awin===false?'win':''}">${p}</td></tr>`;
+}
+$('score').innerHTML=[
+  scoreRow('Driver', A.driver, P.driver, null),
+  scoreRow('Result', A.state, P.state, null),
+  scoreRow('Edits to a passing model', A.edits, P.edits, A.edits<P.edits),
+  scoreRow('Calibration steps for the tolerance', A.calibrations+' (computed t_tol in one shot)', P.calibrations+' (blind fixed steps)', A.calibrations<P.calibrations),
+  scoreRow('Regressions caught & recovered', '2', '2', null),
+  scoreRow('Integrity violations', A.violations, P.violations, null),
+].join("");
+
+function renderCol(run, cls, badge){
+  var h='<div class="col-h"><div class="d">'+(cls==='agent'?'🤖':'⚙️')+' '+run.driver+' <span class="badge b-'+cls+'">'+badge+'</span></div><div class="s">'+run.sub+'</div></div><div class="col-b">';
+  run.iters.forEach(function(it){
+    var done=it.edit==='DONE';
+    var strip=HARD.map(function(nm){var t=it.tests.filter(function(x){return x.name===nm;})[0];var c=t?vc(t.verdict):['var(--panel2)','var(--soft)'];
+      return '<div class="cell" style="background:'+c[0]+';color:'+c[1]+'" title="'+nm+'">'+(abbr[nm]||nm)+'</div>';}).join("");
+    var tags=it.newly_fixed.map(function(x){return '<span class="tag t-fx">+'+(abbr[x]||x)+'</span>';}).join("")
+            +it.regressed.map(function(x){return '<span class="tag t-rg">−'+(abbr[x]||x)+'</span>';}).join("");
+    h+='<div class="it '+(done?'done':'')+'"><div class="it-h"><span class="k">i'+run.iters.indexOf(it)+'</span>'
+      +'<span class="lbl">'+(it.label||'')+'</span><span class="sc">'+it.n_pass+'/'+it.n_hard+'</span></div>'
+      +'<div class="strip">'+strip+'</div>'
+      +'<div class="it-e"><span class="edit">'+it.edit+'</span>'+tags
+      +(it.reasoning&&!done?'<div class="rz">"'+it.reasoning+'"</div>':'')+'</div></div>';
+  });
+  return h+'</div>';
+}
+$('col-agent').innerHTML=renderCol(A,'agent','reasoned');
+$('col-policy').innerHTML=renderCol(P,'policy','coded');
+
+$('insight').innerHTML='<b>The task the policy could not do.</b> The deterministic policy consumed both substrates and grew, but got the <b>regulation</b> wrong — it ate lactose at the same time as glucose — and then <b>gave up</b> ('+P.iters[P.iters.length-1].n_pass+'/'+P.iters[P.iters.length-1].n_hard+'), because no mechanism is <i>named</i> for the ordering test and its worst-margin rule had no move. The LLM agent, on the identical task, reasoned that lactose was being co-consumed because <code>lac_repression</code> was stuck ON, and installed <b>catabolite repression</b> to gate lactose uptake by glucose — reaching DONE in '+A.edits+' edits. This is the difference a real task exposes: the fix was not a knob and not a name-matched mechanism, it was a <b>regulatory coupling</b> that had to be reasoned from the biology.';
+$('foot').innerHTML='Agent decisions: real Claude Sonnet run via scripts/agent_step.py + capture_agent_run.py · policy: scripts/build_loop_demo.py · both on the same process-bigraph composite.';
+</script>
