@@ -1,0 +1,26 @@
+{
+  "schema": "agent_live_runs/v1",
+  "task": "author-a-process",
+  "model": "claude-sonnet-4-5 (live)",
+  "action_space": "OPEN \u2014 the agent authors a new process-bigraph Process (Python), sandboxed in a subprocess with a timeout; there is no library mechanism/menu, so enumeration provably cannot solve it (Fable review #2)",
+  "transport": "in-session live run via a real Claude Code sub-agent driving scripts/agent_env.py author",
+  "runs": [
+    {
+      "run_index": 0,
+      "state": "DONE",
+      "attempts": 1,
+      "authored_process": "class RelaxationProcess(Process): config_schema={target,k}; inputs/outputs={'X':'float'}; update -> dX = k*(target - X)*interval",
+      "citation": "first-order relaxation kinetics (Newton's law of cooling / linear first-order ODE)",
+      "result": {
+        "X_final": 5.0,
+        "matched": true
+      },
+      "reasoning": "Modeled X's approach as first-order relaxation dX/dt=k*(target-X); since port apply is additive, returned dX=k*(target-state['X'])*interval so X converges to 5.0. Matched on first submission."
+    }
+  ],
+  "summary": {
+    "n_runs": 1,
+    "n_done": 1,
+    "note": "Agent wrote valid process-bigraph code (correct config_schema/inputs/outputs/update idiom) that ran in the sandbox and passed \u2014 real agency, not menu selection."
+  }
+}

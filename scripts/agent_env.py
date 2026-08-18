@@ -124,6 +124,23 @@ def main():
         print(json.dumps(out, indent=2))
         return
 
+    # open-action-space task: the agent AUTHORS a Process (sandboxed), no menu.
+    if task == "author":
+        import author_task as A
+        if cmd == "card":
+            out = {"contract": A.CONTRACT,
+                   "how": "Call `step` with {\"code\": \"<python defining a Process subclass>\"}. The code "
+                          "runs sandboxed; you get back X_final and matched (true when X reaches the target). "
+                          "The Process must include a comment citing the mechanism/law it implements."}
+        elif cmd == "step":
+            arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
+            req = json.loads(arg) if arg.strip() else {}
+            out = A.author(req.get("code", ""))
+        else:
+            raise SystemExit("use 'card' or 'step'")
+        print(json.dumps(out, indent=2))
+        return
+
     contract, mechs, step = env_for(task)
     if cmd == "card":
         out = {"contract": contract,
