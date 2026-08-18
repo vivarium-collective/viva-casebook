@@ -29,6 +29,7 @@ sourcing:
     catches_if_wrong: no catalogued module covers the required capabilities, so novelty is warranted.
 baseline:
 - name: build-new
+  composite: viva_casebook.composites.novel-mechanism
   module: null
   domain: new module (no catalogued fit)
   params: {}

@@ -1,0 +1,59 @@
+schema_version: 4
+name: diagnosis
+investigation: agentic-challenges
+title: Ambiguous diagnosis (why is biomass low?)
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: A cell's biomass is far below target. Diagnose the cause from the observables and add the mechanism
+  that fixes it, so the cell both grows (biomass >= 3.0) and stays alive (viability >= 0.5).
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.diagnosis
+  params: {}
+behavior_tests:
+- name: growth
+  classification: primary
+  description: growth
+  measure:
+    observable: growth
+  pass_if:
+    op: ==
+    value: within_tol
+- name: survives
+  classification: primary
+  description: survives
+  measure:
+    observable: survives
+  pass_if:
+    op: ==
+    value: within_tol
+runs:
+- name: diagnosis-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/diagnosis-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 1 edits
+biological_summary: 'A process-bigraph Composite: CellGrowth (Monod uptake → yield growth, GATED by viability)
+  + MembraneStress (viability decay). Biomass is low because the cell is DYING, not because of yield or
+  uptake — a cause diagnosable only from the joint observables (nutrient fully consumed, viability crashed).
+  The fix is stabilize_membrane.'
+conclusion: '## Final model
+
+  A process-bigraph Composite: CellGrowth (Monod uptake → yield growth, GATED by viability) + MembraneStress
+  (viability decay). Biomass is low because the cell is DYING, not because of yield or uptake — a cause
+  diagnosable only from the joint observables (nutrient fully consumed, viability crashed). The fix is
+  stabilize_membrane.
+
+
+  ## Result
+
+  DONE (2/2) in 1 edit — the LLM read the joint observable panel (nutrient fully consumed → uptake fine;
+  viability crashed → cell dying) and installed the one correct fix. The deterministic policy MISDIAGNOSED:
+  it hill-climbed the worst margin, installed boost_yield, growth still failed, and it gave up — a low-growth
+  margin alone cannot name the cause. See docs/diagnosis-agent-vs-policy.html.'
+loop_provenance: diagnosis-agent

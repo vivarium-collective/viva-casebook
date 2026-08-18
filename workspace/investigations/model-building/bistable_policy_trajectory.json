@@ -1,0 +1,145 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "bistable",
+  "driver": "deterministic worst-margin policy",
+  "contract": "Build a bistable genetic switch: two mutually repressing genes A and B that settle into two DISTINCT stable states and latch to whichever gene starts ahead (a decisive toggle, not a graded midpoint).",
+  "tests": [
+    {
+      "id": "bistable",
+      "label": "bistable",
+      "expected": "within_tol"
+    },
+    {
+      "id": "decisive",
+      "label": "decisive",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [
+        "boost_expression"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "install",
+        "mechanism": "boost_expression",
+        "for_test": "bistable",
+        "note": "worst margin is 'bistable' -> naive map installs boost_expression"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "A_from_Ahigh": 2.372,
+        "B_from_Ahigh": 2.372,
+        "A_from_Bhigh": 2.372,
+        "B_from_Bhigh": 2.372,
+        "state_separation": 0.0
+      },
+      "tests": [
+        {
+          "id": "bistable",
+          "label": "bistable",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.0
+        },
+        {
+          "id": "decisive",
+          "label": "decisive",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.5
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "boost_expression"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "blocked",
+        "test": "decisive",
+        "note": "worst margin 'decisive' has no mechanism the policy can name; boosting expression left the switch monostable \u2014 the policy has no way to express 'add cooperative feedback' (a structural change, not a knob)"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "A_from_Ahigh": 2.372,
+        "B_from_Ahigh": 2.372,
+        "A_from_Bhigh": 2.372,
+        "B_from_Bhigh": 2.372,
+        "state_separation": 0.0
+      },
+      "tests": [
+        {
+          "id": "bistable",
+          "label": "bistable",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.0
+        },
+        {
+          "id": "decisive",
+          "label": "decisive",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.5
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "boost_expression"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "blocked",
+        "test": "decisive",
+        "note": "worst margin 'decisive' has no mechanism the policy can name; boosting expression left the switch monostable \u2014 the policy has no way to express 'add cooperative feedback' (a structural change, not a knob)"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "A_from_Ahigh": 2.372,
+        "B_from_Ahigh": 2.372,
+        "A_from_Bhigh": 2.372,
+        "B_from_Bhigh": 2.372,
+        "state_separation": 0.0
+      },
+      "tests": [
+        {
+          "id": "bistable",
+          "label": "bistable",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.0
+        },
+        {
+          "id": "decisive",
+          "label": "decisive",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.5
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 2
+  }
+}

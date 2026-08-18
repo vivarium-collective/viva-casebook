@@ -1,0 +1,57 @@
+schema_version: 4
+name: bistable
+investigation: agentic-challenges
+title: Bistable genetic switch
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: 'Build a bistable genetic switch: two mutually repressing genes A and B that settle into two
+  DISTINCT stable states and latch to whichever gene starts ahead (a decisive toggle, not a graded midpoint).'
+baseline:
+- name: final-model
+  composite: viva_casebook.composites.bistable
+  params: {}
+behavior_tests:
+- name: bistable
+  classification: primary
+  description: bistable
+  measure:
+    observable: bistable
+  pass_if:
+    op: ==
+    value: within_tol
+- name: decisive
+  classification: primary
+  description: decisive
+  measure:
+    observable: decisive
+  pass_if:
+    op: ==
+    value: within_tol
+runs:
+- name: bistable-agent
+  status: completed
+  provenance: agentic model-building loop → .pbg/loop/bistable-agent.json
+  outcomes:
+    LOOP-OUTCOME:
+      result: PASS
+      detail: DONE in 1 edits
+biological_summary: 'A process-bigraph Composite: a ToggleSwitch process — two mutually repressing genes
+  A,B with COOPERATIVE (Hill n=2) repression. Cooperativity is the structural feature that destabilises
+  the symmetric state and opens two stable basins, so the switch latches to whichever gene starts ahead.'
+conclusion: '## Final model
+
+  A process-bigraph Composite: a ToggleSwitch process — two mutually repressing genes A,B with COOPERATIVE
+  (Hill n=2) repression. Cooperativity is the structural feature that destabilises the symmetric state
+  and opens two stable basins, so the switch latches to whichever gene starts ahead.
+
+
+  ## Result
+
+  DONE (2/2) in 1 edit — the LLM recognised that two stable states require COOPERATIVE feedback (Hill
+  n≥2) and added it, opening two basins (state separation 3.46). The deterministic policy tuned expression
+  (a knob), stayed monostable (separation 0), and gave up: bistability is a structural property no single
+  knob tunes into being. See docs/bistable-agent-vs-policy.html.'
+loop_provenance: bistable-agent

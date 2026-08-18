@@ -1,0 +1,111 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "bistable",
+  "driver": "LLM agent (Claude) \u2014 recognised bistability requires cooperative feedback",
+  "contract": "Build a bistable genetic switch: two mutually repressing genes A and B that settle into two DISTINCT stable states and latch to whichever gene starts ahead (a decisive toggle, not a graded midpoint).",
+  "tests": [
+    {
+      "id": "bistable",
+      "label": "bistable",
+      "expected": "within_tol"
+    },
+    {
+      "id": "decisive",
+      "label": "decisive",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "install_mechanism",
+        "value": "cooperative_binding",
+        "reasoning": "Both genes relax to the same symmetric level \u2014 the switch is monostable, and boosting expression or degradation only moves that single fixed point, never splits it. Two stable states in a mutual-repression network require COOPERATIVE repression (Hill n >= 2): ultrasensitivity is what destabilises the symmetric state and opens two basins. Install cooperative_binding."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "A_from_Ahigh": 1.562,
+        "B_from_Ahigh": 1.562,
+        "A_from_Bhigh": 1.562,
+        "B_from_Bhigh": 1.562,
+        "state_separation": 0.0
+      },
+      "tests": [
+        {
+          "id": "bistable",
+          "label": "bistable",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.0,
+          "severity": "hard"
+        },
+        {
+          "id": "decisive",
+          "label": "decisive",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -2.5,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "cooperative_binding"
+      ],
+      "n_pass": 2,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "Both tests pass \u2014 the two initial conditions latch to distinct, decisive states (A-high vs B-high). Cooperative feedback produced the bistability."
+      },
+      "newly_fixed": [
+        "bistable",
+        "decisive"
+      ],
+      "regressed": [],
+      "observables": {
+        "A_from_Ahigh": 3.732,
+        "B_from_Ahigh": 0.268,
+        "A_from_Bhigh": 0.268,
+        "B_from_Bhigh": 3.732,
+        "state_separation": 3.464
+      },
+      "tests": [
+        {
+          "id": "bistable",
+          "label": "bistable",
+          "verdict": "within_tol",
+          "observed": 3.464,
+          "expected": "within_tol",
+          "margin": 1.464,
+          "severity": "hard"
+        },
+        {
+          "id": "decisive",
+          "label": "decisive",
+          "verdict": "within_tol",
+          "observed": 3.464,
+          "expected": "within_tol",
+          "margin": 1.232,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 1,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "model_build_trajectory/v2",
+  "study": "diagnosis",
+  "driver": "deterministic worst-margin policy",
+  "contract": "A cell's biomass is far below target. Diagnose the cause from the observables and add the mechanism that fixes it, so the cell both grows (biomass >= 3.0) and stays alive (viability >= 0.5).",
+  "tests": [
+    {
+      "id": "growth",
+      "label": "growth",
+      "expected": "within_tol"
+    },
+    {
+      "id": "survives",
+      "label": "survives",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [
+        "boost_yield"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "install",
+        "mechanism": "boost_yield",
+        "for_test": "growth",
+        "note": "worst margin is 'growth' -> naive map installs boost_yield"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "biomass": 1.77,
+        "nutrient_final": 0.0,
+        "viability_final": 0.0
+      },
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 1.114,
+          "expected": "within_tol",
+          "margin": -1.886
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -0.5
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "boost_yield"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "blocked",
+        "test": "growth",
+        "note": "worst margin 'growth' has no mechanism the policy can name, and its only mapped fix (boost_yield) is installed yet growth still fails \u2014 the policy cannot diagnose from the joint observables"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "biomass": 1.77,
+        "nutrient_final": 0.0,
+        "viability_final": 0.0
+      },
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 1.77,
+          "expected": "within_tol",
+          "margin": -1.23
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -0.5
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "active": [
+        "boost_yield"
+      ],
+      "n_pass": 0,
+      "n_hard": 2,
+      "decision": {
+        "kind": "blocked",
+        "test": "growth",
+        "note": "worst margin 'growth' has no mechanism the policy can name, and its only mapped fix (boost_yield) is installed yet growth still fails \u2014 the policy cannot diagnose from the joint observables"
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "biomass": 1.77,
+        "nutrient_final": 0.0,
+        "viability_final": 0.0
+      },
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 1.77,
+          "expected": "within_tol",
+          "margin": -1.23
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -0.5
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "GIVE_UP",
+    "edits": 2
+  }
+}

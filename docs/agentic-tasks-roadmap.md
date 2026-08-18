@@ -14,11 +14,11 @@ margin) has **no move** for the real fix.
 |---|---|---|---|---|---|
 | 1 | **Bounded cell** | quantitative single-shot calibration | pbg composites | ready | ✅ done (LLM 4 edits vs policy 5) |
 | 2 | **Diauxie** (glucose→lactose) | **regulatory reasoning** — the fix is a *coupling* (catabolite repression), not a knob or named mechanism | pbg composites | ready | ✅ done (**policy GIVE_UP 3/4, LLM DONE 4/4**) |
-| 3 | **Ambiguous diagnosis** ("biomass too low") | **diagnose** the cause from *joint* observables; worst single margin points at the wrong fix | pbg composites | ready | planned |
-| 4 | **Bistable toggle switch** | **discover a topology** (mutual repression) + a narrow bistable regime — unreachable by knob-stepping | pbg composites | ready (tuning finicky) | planned |
-| 5 | **Multicellular + subcellular phenotype** | **SELECT a multicellular simulator** (CPM vs rigid-body vs spatial), then compose subcellular models to hit a tissue phenotype | `viva-cpm` (has `subcellular/sbml.py` + Boolean subcells), `viva-munk`, `spatio-flux` | mostly ready | planned |
-| 6 | **Multiscale coupling via a translator** | author a **typed translator** that couples two models at different scales (units/variables/timescale) | `spatio-flux` (FBA ↔ diffusion precedent); see `project_domain_bridges_formalization` | ready (design the translator) | planned |
-| 7 | **Build complex SBML → COPASI → test quality** | author a large **SBML** model + validate it through an **external tool** (round-trip, steady-state, conservation) | needs a **viva-copasi** wrapper (`basico`/COPASI) — not built yet; `libsbml` present | biggest lift | planned |
+| 3 | **Ambiguous diagnosis** ("biomass too low") | **diagnose** the cause from *joint* observables; worst single margin points at the wrong fix | pbg composites | **built** | **DONE** — policy misdiagnoses (boost_yield) → GIVE_UP; LLM reads joint observables → DONE 1 edit |
+| 4 | **Bistable toggle switch** | **discover a topology** (mutual repression) + a narrow bistable regime — unreachable by knob-stepping | pbg composites | **built** | **DONE** — policy tunes expression, stays monostable → GIVE_UP; LLM adds cooperative feedback (Hill n≥2) → DONE 1 edit |
+| 5 | **Multicellular + subcellular phenotype** | **SELECT a multicellular simulator** (CPM vs rigid-body vs spatial), then compose subcellular models to hit a tissue phenotype | `viva-cpm`, `viva-munk`, `spatio-flux` | **built** | ✅ done (**policy GIVE_UP, LLM DONE** — selects CPM, composes subcell fate) |
+| 6 | **Multiscale coupling via a translator** | author a **typed translator** that couples two models at different scales (units/variables/timescale) | `spatio-flux` precedent; see `project_domain_bridges_formalization` | **built** | ✅ done (**policy GIVE_UP 1/4, LLM DONE 4/4** — authors translator + unit conversion) |
+| 7 | **Build complex SBML → COPASI → test quality** | author a large **SBML** model + validate it through an **external tool** (round-trip, steady-state, conservation) | **viva-copasi** wrapper (`basico`/COPASI) installed; `libsbml` present | **built** | ✅ done (**policy GIVE_UP 0/5, LLM DONE 5/5** — real COPASI validation) |
 
 ## Notes on the hardest two
 - **#7 (SBML/COPASI)** is the largest: it needs a `viva-copasi` package (a COPASI

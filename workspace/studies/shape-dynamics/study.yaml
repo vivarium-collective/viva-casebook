@@ -31,6 +31,7 @@ sourcing:
     catches_if_wrong: build-new would trip `reinvention` — the CPM engine already exists.
 baseline:
 - name: viva-cpm
+  composite: viva_casebook.composites.shape-dynamics
   module: viva-cpm
   domain: Cellular Potts shape engine (Rust)
   params: {}

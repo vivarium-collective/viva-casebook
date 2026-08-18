@@ -31,6 +31,7 @@ sourcing:
     catches_if_wrong: build-new would trip `reinvention` — a physics engine already exists.
 baseline:
 - name: viva-munk
+  composite: viva_casebook.composites.cell-jostling
   module: viva-munk
   domain: 2D rigid-body physics (pymunk)
   params: {}

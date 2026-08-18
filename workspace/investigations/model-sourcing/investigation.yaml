@@ -22,8 +22,8 @@ executive:
     FAILS on source_fit because viva-munk provides no `spatial` capability. All three reused modules execute
     for real on ONE shared workspace core (viva-munk rigid-body physics; spatio-flux spatial dFBA with
     real glucose drawdown and acetate secretion; viva-cpm Cellular Potts cells relaxing toward their target
-    shape) — each is inherited into viva_casebook.core.build_core rather than run on a parallel
-    core. Only the two non-reuse tasks (build-new, trap) have no run, by design.'
+    shape) — each is inherited into viva_casebook.core.build_core rather than run on a parallel core.
+    Only the two non-reuse tasks (build-new, trap) have no run, by design.'
   verdict_status: passed
   decisions_needed: []
 at_a_glance:

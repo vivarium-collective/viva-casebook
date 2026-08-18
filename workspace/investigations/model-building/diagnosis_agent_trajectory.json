@@ -1,0 +1,107 @@
+{
+  "schema": "agent_build_trajectory/v1",
+  "study": "diagnosis",
+  "driver": "LLM agent (Claude) \u2014 diagnosed the cause from the joint observable panel",
+  "contract": "A cell's biomass is far below target. Diagnose the cause from the observables and add the mechanism that fixes it, so the cell both grows (biomass >= 3.0) and stays alive (viability >= 0.5).",
+  "tests": [
+    {
+      "id": "growth",
+      "label": "growth",
+      "expected": "within_tol"
+    },
+    {
+      "id": "survives",
+      "label": "survives",
+      "expected": "within_tol"
+    }
+  ],
+  "iterations": [
+    {
+      "iteration": 0,
+      "active": [],
+      "n_pass": 0,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "install_mechanism",
+        "value": "stabilize_membrane",
+        "reasoning": "The panel diagnoses the cause: nutrient is fully consumed (uptake is fine) and yield is adequate, yet biomass is low BECAUSE viability has crashed to ~0 \u2014 the cell dies before it can grow. This is membrane failure, not a yield or uptake deficit, so boosting either would not help. Install stabilize_membrane to keep the cell alive; growth follows."
+      },
+      "newly_fixed": [],
+      "regressed": [],
+      "observables": {
+        "biomass": 1.114,
+        "nutrient_final": 0.0,
+        "viability_final": 0.0
+      },
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "mismatch",
+          "observed": 1.114,
+          "expected": "within_tol",
+          "margin": -1.886,
+          "severity": "hard"
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "mismatch",
+          "observed": 0.0,
+          "expected": "within_tol",
+          "margin": -0.5,
+          "severity": "hard"
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "active": [
+        "stabilize_membrane"
+      ],
+      "n_pass": 2,
+      "n_hard": 2,
+      "agent_decision": {
+        "action": "done",
+        "reasoning": "Both tests pass \u2014 the cell survives (viability held) and grows past the biomass target. The diagnosis (membrane failure) was correct."
+      },
+      "newly_fixed": [
+        "growth",
+        "survives"
+      ],
+      "regressed": [],
+      "observables": {
+        "biomass": 4.5,
+        "nutrient_final": 0.0,
+        "viability_final": 1.0
+      },
+      "tests": [
+        {
+          "id": "growth",
+          "label": "growth",
+          "verdict": "within_tol",
+          "observed": 4.5,
+          "expected": "within_tol",
+          "margin": 1.5,
+          "severity": "hard"
+        },
+        {
+          "id": "survives",
+          "label": "survives",
+          "verdict": "within_tol",
+          "observed": 1.0,
+          "expected": "within_tol",
+          "margin": 0.5,
+          "severity": "hard"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "state": "DONE",
+    "edits": 1,
+    "violations": [
+      "I1: locked behavior_tests changed outside a re-open\u2192AUDIT round"
+    ]
+  }
+}

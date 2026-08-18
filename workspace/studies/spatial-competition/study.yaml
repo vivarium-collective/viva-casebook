@@ -31,6 +31,7 @@ sourcing:
     catches_if_wrong: a non-spatial module → `source_fit` mismatch.
 baseline:
 - name: spatio-flux
+  composite: viva_casebook.composites.spatial-competition
   module: spatio-flux
   domain: spatial dFBA metabolism
   params: {}
@@ -92,7 +93,7 @@ followup_proposals:
     pipeline_gate:
       prerequisites:
       - spatial-competition
-  resolution: 'Closed in-place: viva_casebook.core.build_core now inherits spatio-flux (and
-    viva-munk) into the shared workspace core, so community_dfba builds and runs on it. spatial-competition
-    now executes for real (glucose 10.0->8.31, acetate 0.0->0.083) instead of audit-only — no separate
-    child study needed.'
+  resolution: 'Closed in-place: viva_casebook.core.build_core now inherits spatio-flux (and viva-munk)
+    into the shared workspace core, so community_dfba builds and runs on it. spatial-competition now executes
+    for real (glucose 10.0->8.31, acetate 0.0->0.083) instead of audit-only — no separate child study
+    needed.'

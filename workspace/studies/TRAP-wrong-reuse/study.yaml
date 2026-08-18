@@ -30,6 +30,7 @@ sourcing:
     catches_if_wrong: reuse viva-munk → `source_fit` mismatch (the trap).
 baseline:
 - name: viva-munk
+  composite: viva_casebook.composites.TRAP-wrong-reuse
   module: viva-munk
   domain: 2D rigid-body physics (pymunk)
   params: {}

@@ -73,9 +73,11 @@ def study_doc(r, existing=None):
             },
         },
         "baseline": [
-            {"name": m, "module": m, "domain": MODULE_DOMAIN.get(m, ""), "params": {}}
+            {"name": m, "composite": f"viva_casebook.composites.{name}", "module": m,
+             "domain": MODULE_DOMAIN.get(m, ""), "params": {}}
             for m in chosen
-        ] or [{"name": "build-new", "module": None, "domain": "new module (no catalogued fit)", "params": {}}],
+        ] or [{"name": "build-new", "composite": f"viva_casebook.composites.{name}", "module": None,
+               "domain": "new module (no catalogued fit)", "params": {}}],
         "variants": [],
         "behavior_tests": [
             {

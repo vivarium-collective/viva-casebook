@@ -36,6 +36,14 @@ FINAL_MODEL = {
                   "flux, mol/time) + DiffusionField (a 1-D concentration field, mM) coupled by a "
                   "FluxTranslator that maps the cell's flux to the field's per-grid source with the "
                   "unit conversion (÷volume) that conserves mass across the scale interface.",
+    "diagnosis": "A process-bigraph Composite: CellGrowth (Monod uptake → yield growth, GATED by "
+                 "viability) + MembraneStress (viability decay). Biomass is low because the cell is "
+                 "DYING, not because of yield or uptake — a cause diagnosable only from the joint "
+                 "observables (nutrient fully consumed, viability crashed). The fix is stabilize_membrane.",
+    "bistable": "A process-bigraph Composite: a ToggleSwitch process — two mutually repressing genes A,B "
+                "with COOPERATIVE (Hill n=2) repression. Cooperativity is the structural feature that "
+                "destabilises the symmetric state and opens two stable basins, so the switch latches to "
+                "whichever gene starts ahead.",
 }
 
 
@@ -132,6 +140,29 @@ def main():
         "translator, reasoning the unit conversion (mol/time → mM/time over the compartment volume) needed to "
         "conserve mass. The deterministic policy GAVE UP at 1/4: 'author a translator' is not an install it "
         "can express. See docs/multiscale-agent-vs-policy.html.")
+
+    dg = _load("diagnosis_agent_trajectory.json")
+    studies["diagnosis"] = study(
+        "diagnosis", "Ambiguous diagnosis (why is biomass low?)", dg["contract"], tests_of(dg),
+        "diagnosis-agent", dg["result"]["state"],
+        dg["result"].get("edits", dg["result"].get("edits_to_pass")), FINAL_MODEL["diagnosis"],
+        "## Final model\n" + FINAL_MODEL["diagnosis"] +
+        "\n\n## Result\nDONE (2/2) in 1 edit — the LLM read the joint observable panel (nutrient fully "
+        "consumed → uptake fine; viability crashed → cell dying) and installed the one correct fix. The "
+        "deterministic policy MISDIAGNOSED: it hill-climbed the worst margin, installed boost_yield, growth "
+        "still failed, and it gave up — a low-growth margin alone cannot name the cause. "
+        "See docs/diagnosis-agent-vs-policy.html.")
+
+    bs = _load("bistable_agent_trajectory.json")
+    studies["bistable"] = study(
+        "bistable", "Bistable genetic switch", bs["contract"], tests_of(bs),
+        "bistable-agent", bs["result"]["state"],
+        bs["result"].get("edits", bs["result"].get("edits_to_pass")), FINAL_MODEL["bistable"],
+        "## Final model\n" + FINAL_MODEL["bistable"] +
+        "\n\n## Result\nDONE (2/2) in 1 edit — the LLM recognised that two stable states require COOPERATIVE "
+        "feedback (Hill n≥2) and added it, opening two basins (state separation 3.46). The deterministic "
+        "policy tuned expression (a knob), stayed monostable (separation 0), and gave up: bistability is a "
+        "structural property no single knob tunes into being. See docs/bistable-agent-vs-policy.html.")
 
     for name, doc in studies.items():
         d = os.path.join(STUDIES, name)
