@@ -97,12 +97,16 @@ def main():
         raise SystemExit(__doc__)
     task, cmd = sys.argv[1], sys.argv[2]
 
-    # data-grounded BioModels break-and-repair task: different action shape
-    # (repair a parameter) and observation (the divergence from the reference model)
-    if task == "repair":
+    # data-grounded BioModels break-and-repair suite: different action shape
+    # (repair a parameter) and observation (the divergence from the reference model).
+    # task is "repair" (default break) or "repair-<break_id>", e.g. repair-km.
+    if task.startswith("repair"):
         import biomodels_repair_task as R
+        break_id = task.split("-", 1)[1] if "-" in task else "hill"
+        if break_id not in R.BREAKS:
+            raise SystemExit(f"unknown break {break_id!r}; choose from {sorted(R.BREAKS)}")
         if cmd == "card":
-            bs = R.broken_state()
+            bs = R.broken_state(break_id)
             out = {"contract": "A curated BioModels model (Elowitz 2000 repressilator) no longer "
                    "reproduces its REFERENCE time-course because one kinetic parameter was changed. "
                    "Diagnose which parameter is wrong and repair it — set it to a value that restores "
@@ -114,7 +118,7 @@ def main():
         elif cmd == "step":
             arg = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
             req = json.loads(arg) if arg.strip() else {}
-            out = R.repair(req.get("param"), req.get("value"))
+            out = R.repair(break_id, req.get("param"), req.get("value"))
         else:
             raise SystemExit("use 'card' or 'step'")
         print(json.dumps(out, indent=2))
