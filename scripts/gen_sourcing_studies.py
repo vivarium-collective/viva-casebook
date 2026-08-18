@@ -37,7 +37,8 @@ BIO = {
 
 
 def study_doc(r, existing=None):
-    name = r["task"]
+    name = r["task"]                 # lookup key into RIGHT/BIO (may contain caps)
+    slug = r["task"].lower()         # on-disk slug MUST be lowercase-kebab (API rejects caps)
     dec = r["sourcing"]["decision"]
     chosen = r["sourcing"]["modules"]
     gate = r["gate"]
@@ -47,14 +48,14 @@ def study_doc(r, existing=None):
     run_note = r["real_run"]
     doc = {
         "schema_version": 4,
-        "name": name,
+        "name": slug,
         "investigation": "model-sourcing",
         "title": name.replace("-", " ").title(),
         "created": "2026-08-17",
         "status": "complete",
         "phase": "Decide",
         "gate_status": "passed" if passed else "failed",
-        "confidence": "Accepted" if passed else "Rejected",
+        "confidence": "Accepted" if passed else "Refuted",
         "question": f"Given the task's required capabilities {r['requires']}, what is the "
                     f"right way to source the model — reuse, compose, or build-new — and does "
                     f"the sourcing audit confirm it?",
@@ -73,10 +74,10 @@ def study_doc(r, existing=None):
             },
         },
         "baseline": [
-            {"name": m, "composite": f"viva_casebook.composites.{name}", "module": m,
+            {"name": m, "composite": f"viva_casebook.composites.{slug}", "module": m,
              "domain": MODULE_DOMAIN.get(m, ""), "params": {}}
             for m in chosen
-        ] or [{"name": "build-new", "composite": f"viva_casebook.composites.{name}", "module": None,
+        ] or [{"name": "build-new", "composite": f"viva_casebook.composites.{slug}", "module": None,
                "domain": "new module (no catalogued fit)", "params": {}}],
         "variants": [],
         "behavior_tests": [
@@ -99,7 +100,7 @@ def study_doc(r, existing=None):
         ],
         "runs": [
             {
-                "name": name,
+                "name": slug,
                 "module": chosen[0] if chosen else None,
                 "status": "completed" if ran else ("error" if run_note.startswith("run err") else "audit-only"),
                 "provenance": f"scripts/model_sourcing_demo.py — real module execution: {run_note}"
@@ -135,9 +136,9 @@ def study_doc(r, existing=None):
 
 def main():
     os.makedirs(INV, exist_ok=True)
-    order = [r["task"] for r in RESULTS["results"]]
+    order = [r["task"].lower() for r in RESULTS["results"]]
     for r in RESULTS["results"]:
-        sdir = os.path.join(STUDIES, r["task"])
+        sdir = os.path.join(STUDIES, r["task"].lower())
         spath = os.path.join(sdir, "study.yaml")
         existing = yaml.safe_load(open(spath)) if os.path.exists(spath) else None
         d = study_doc(r, existing)

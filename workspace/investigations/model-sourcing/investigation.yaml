@@ -68,6 +68,6 @@ studies:
 - spatial-competition
 - shape-dynamics
 - novel-mechanism
-- TRAP-wrong-reuse
+- trap-wrong-reuse
 acceptance_criteria: []
 expert_docs: []
