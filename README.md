@@ -6,6 +6,7 @@ evaluation is the framework's *own* ability to build models well, kept separate 
 any single paper or model.
 
 > 🔁 **Flagship report — [the study-automation pipeline, end to end](https://vivarium-collective.github.io/viva-casebook/)**: one study driven through the whole model-building loop — contract → draft → tests → sufficiency audit → the *real, emergent* iteration trajectory from an inert draft to a model passing every test ([`docs/pipeline-report.html`](docs/pipeline-report.html)).
+> 🤖 And a head-to-head: [**LLM agent vs deterministic policy**](docs/agent-vs-policy.html) — the same study built two ways, an actual LLM reasoning over the margins beside a hand-coded rule, on the same real composite.
 > 📊 Also: the [model-sourcing scorecard](docs/status.html).
 
 The framework itself lives in
