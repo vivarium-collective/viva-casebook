@@ -73,39 +73,45 @@ def repair_section():
     r = D["repair"]
     if not r:
         return ""
+    models = r.get("models", {})
     cards = []
     for run in r["runs"]:
         loc = run["localize"]
         fit = run["fit"]
         moved = ", ".join(f"{p}:{v}" for p, v in loc["moved_from_broken"].items())
+        cands = run.get("candidate_parameters", [])
+        label = run.get("model_label", "").split(" — ")[0]
         cards.append(
             f'<div class="card pass"><h3>Break <code>{esc(run["break_id"])}</code> '
-            f'<span style="font-weight:400;color:var(--ink-3)">(opaque — the id does not name the parameter)</span></h3>'
+            f'<span style="font-weight:400;color:var(--ink-3)">(opaque — the id names neither the model nor the parameter)</span></h3>'
             f'<div class="chiprow">'
+            f'<span class="chip">{esc(label)}</span>'
             f'<span class="chip pass">✓ PE repaired · resim RMSD {esc(fit["resim_rmsd"])}</span>'
-            f'<span class="chip mono">fit → {esc(fit["fitted"])}</span>'
             f'<span class="chip mono">{esc(fit.get("method",""))}</span></div>'
             f'<div class="reason"><b>Recall-free diagnosis (localize baseline):</b> PE fit all candidate '
-            f'parameters {esc(D["repair"].get("candidate_parameters"))} jointly against the reference trace; '
+            f'parameters {esc(cands)} jointly against the reference trace; '
             f'only <code>{esc(loc["diagnosed_parameter"])}</code> had to move (moved: {esc(moved)}) → '
             f'diagnosed the break by optimization, no canonical value consulted. '
             f'The break was <code>{esc(run["param"])}</code> ({esc(run["blurb"])}) '
             f'{esc(run["broken_value"])} → {esc(run["true_value"])}; diagnosis '
             f'{"correct" if loc["correct"] else "INCORRECT"}.</div></div>')
+    model_line = "; ".join(v.split(" — ")[0] for v in models.values()) if models else "a kinetic model"
     return (
         '<div class="sec-h"><h2>Data-grounded biology — break &amp; repair by parameter estimation</h2><span class="rule"></span></div>'
-        '<p class="sub">A kinetic model run in the real COPASI backend; one parameter is broken and must be '
-        'repaired against the intact reference time-course. The repair oracle is <b>optimization, not '
-        'recall</b> — COPASI Parameter Estimation fits the reference trace and recovers the true value, and a '
-        'recall-free <b>localization</b> baseline fits all candidates and identifies the broken one by which '
-        'must move. Break ids are opaque and the reference + broken time-courses are exposed on the task card '
-        '(the agent sees the divergence, not just a scalar), so the diagnosis cannot come from a memorized '
-        'number.</p>' + "".join(cards) +
-        '<div class="callout">🔬 <b>Why this is stronger than the old version.</b> The earlier suite graded a '
-        '<i>recalled</i> fix (the celebrity repressilator, diagnosed from "double the canonical value"). Here '
-        'the oracle is a COPASI optimizer fitting the trace — celebrity-ness of the model no longer helps, '
-        'because recall plays no role. Broadening to a corpus of non-celebrity models is the next step '
-        '(each needs its own PE window tuning).</div>')
+        f'<p class="sub">Two structurally different gene-regulatory circuits ({esc(model_line)}) run in the '
+        'real COPASI backend; one parameter is broken and must be repaired against the intact reference '
+        'time-course. The repair oracle is <b>optimization, not recall</b> — COPASI Parameter Estimation fits '
+        'the reference trace and recovers the true value, and a recall-free <b>localization</b> baseline fits '
+        'all candidates and identifies the broken one by which must move. Break ids are opaque (naming neither '
+        'model nor parameter) and the reference + broken time-courses are exposed on the task card (the agent '
+        'sees the divergence, not just a scalar), so the diagnosis cannot come from a memorized number.</p>'
+        + "".join(cards) +
+        '<div class="callout">🔬 <b>De-celebritized, and honestly so.</b> The suite now spans two distinct '
+        'circuits — a synthetic bacterial oscillator and a mammalian pluripotency switch — not one celebrity '
+        'model. Each was <b>vetted</b>, not just fetched: most published models have "sloppy"/non-identifiable '
+        'parameters where every optimizer (Levenberg–Marquardt, Particle Swarm, Evolutionary Programming) '
+        'converges to the same wrong value, so only models with structurally identifiable, sensitive, jointly '
+        'localizable parameters qualify. That vetting is the barrier to adding more — not PE tuning.</div>')
 
 
 def author_section():
@@ -167,7 +173,7 @@ def page():
         'audit/lock/build machinery. Every verdict shown is real engine output.</p>'
         '<div class="kpi">'
         '<div><div class="n">3</div><div class="l">live menu-task runs (n=1 each)</div></div>'
-        '<div><div class="n">COPASI</div><div class="l">parameter-estimation repair oracle</div></div>'
+        '<div><div class="n">2</div><div class="l">vetted models · COPASI PE repair oracle</div></div>'
         '<div><div class="n">1</div><div class="l">Process authored from scratch</div></div>'
         '<div><div class="n">sha256</div><div class="l">enforced pre-registration lock</div></div></div>'
         '</div>'

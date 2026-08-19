@@ -25,8 +25,11 @@ def main():
         bs = R.broken_state(bid)
         f = R.fit(bid)
         loc = R.localize(bid)
+        m = R.MODELS[spec["model"]]
         runs.append({
-            "break_id": bid, "param": spec["param"], "blurb": spec["blurb"],
+            "break_id": bid, "model": spec["model"], "model_label": m["label"],
+            "candidate_parameters": list(m["candidates"]),
+            "param": spec["param"], "blurb": spec["blurb"],
             "broken_value": spec["broken"], "true_value": true,
             "broken_rmsd": bs["rmsd_vs_reference"],
             "fit": {"fitted": f["fitted"], "resim_rmsd": f["resim_rmsd"], "matched": f["matched"],
@@ -35,25 +38,26 @@ def main():
                          "moved_from_broken": loc["moved_from_broken"]},
         })
     doc = {
-        "schema": "repair_suite_pe/v1",
-        "task": "break-and-repair via COPASI parameter estimation",
-        "model": "repressilator (SBML) simulated in the real COPASI backend",
+        "schema": "repair_suite_pe/v2",
+        "task": "break-and-repair via COPASI parameter estimation, over multiple non-celebrity models",
+        "models": {k: v["label"] for k, v in R.MODELS.items()},
         "oracle": "COPASI Parameter Estimation (Levenberg–Marquardt) fitting the intact reference "
                   "time-course — recall-free by construction; the optimizer never sees a canonical value",
         "driver": "deterministic demonstration of the PE repair + recall-free localization machinery — "
                   "no LLM recall; every value is real COPASI PE output (reproduce: "
                   "python scripts/gen_repair_demo.py)",
-        "candidate_parameters": list(R._CANDIDATES),
         "runs": runs,
         "summary": {
-            "n_breaks": len(runs),
+            "n_models": len(R.MODELS), "n_breaks": len(runs),
             "all_repaired": all(r["fit"]["matched"] for r in runs),
             "all_localized_correctly": all(r["localize"]["correct"] for r in runs),
-            "note": "Each break is repaired by optimization (PE recovers the true value, resim RMSD ~0) and "
-                    "independently DIAGNOSED by the recall-free localization baseline (fit all candidates; "
-                    "the broken one is the one that must move). Break ids are opaque; the reference and "
-                    "broken time-courses are shown on the card. Celebrity-ness of the model no longer "
-                    "helps — the oracle is an optimizer, not recall.",
+            "note": "The suite spans two structurally different, independently vetted gene-regulatory "
+                    "circuits (a synthetic bacterial oscillator and a mammalian pluripotency switch). Each "
+                    "break is repaired by optimization (PE recovers the true value, resim RMSD ~0) and "
+                    "DIAGNOSED by the recall-free localization baseline (fit all candidates; the broken one "
+                    "is the one that must move). Break ids are opaque; the reference + broken time-courses "
+                    "are exposed on the task card. Celebrity-ness no longer helps — the oracle is an "
+                    "optimizer, not recall.",
         },
     }
     path = os.path.join(OUT, "repair_suite_live.json")

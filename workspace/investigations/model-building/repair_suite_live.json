@@ -1,17 +1,22 @@
 {
-  "schema": "repair_suite_pe/v1",
-  "task": "break-and-repair via COPASI parameter estimation",
-  "model": "repressilator (SBML) simulated in the real COPASI backend",
+  "schema": "repair_suite_pe/v2",
+  "task": "break-and-repair via COPASI parameter estimation, over multiple non-celebrity models",
+  "models": {
+    "repressilator": "Elowitz 2000 repressilator \u2014 a synthetic three-gene bacterial oscillator",
+    "stemcell": "Chickarmane 2006 stem-cell switch \u2014 the OCT4/SOX2/Nanog pluripotency network"
+  },
   "oracle": "COPASI Parameter Estimation (Levenberg\u2013Marquardt) fitting the intact reference time-course \u2014 recall-free by construction; the optimizer never sees a canonical value",
   "driver": "deterministic demonstration of the PE repair + recall-free localization machinery \u2014 no LLM recall; every value is real COPASI PE output (reproduce: python scripts/gen_repair_demo.py)",
-  "candidate_parameters": [
-    "n",
-    "KM",
-    "translation efficiency"
-  ],
   "runs": [
     {
       "break_id": "repair-01",
+      "model": "repressilator",
+      "model_label": "Elowitz 2000 repressilator \u2014 a synthetic three-gene bacterial oscillator",
+      "candidate_parameters": [
+        "n",
+        "KM",
+        "translation efficiency"
+      ],
       "param": "n",
       "blurb": "the cooperative-repression Hill coefficient",
       "broken_value": 1.0,
@@ -19,9 +24,11 @@
       "broken_rmsd": 0.307,
       "fit": {
         "fitted": {
-          "n": 2.0
+          "n": 2.0,
+          "KM": 39.99999,
+          "translation efficiency": 20.0
         },
-        "resim_rmsd": 9e-05,
+        "resim_rmsd": 0.000167,
         "matched": true,
         "method": "Levenberg - Marquardt"
       },
@@ -30,13 +37,20 @@
         "correct": true,
         "moved_from_broken": {
           "n": 1.0,
-          "KM": 0.0,
+          "KM": 1e-05,
           "translation efficiency": 0.0
         }
       }
     },
     {
       "break_id": "repair-02",
+      "model": "repressilator",
+      "model_label": "Elowitz 2000 repressilator \u2014 a synthetic three-gene bacterial oscillator",
+      "candidate_parameters": [
+        "n",
+        "KM",
+        "translation efficiency"
+      ],
       "param": "KM",
       "blurb": "the repression half-saturation constant",
       "broken_value": 80.0,
@@ -44,9 +58,11 @@
       "broken_rmsd": 0.1827,
       "fit": {
         "fitted": {
-          "KM": 40.0
+          "n": 2.0,
+          "KM": 40.00001,
+          "translation efficiency": 20.0
         },
-        "resim_rmsd": 3e-06,
+        "resim_rmsd": 0.000138,
         "matched": true,
         "method": "Levenberg - Marquardt"
       },
@@ -55,13 +71,20 @@
         "correct": true,
         "moved_from_broken": {
           "n": 0.0,
-          "KM": 40.0,
+          "KM": 39.99999,
           "translation efficiency": 0.0
         }
       }
     },
     {
       "break_id": "repair-03",
+      "model": "repressilator",
+      "model_label": "Elowitz 2000 repressilator \u2014 a synthetic three-gene bacterial oscillator",
+      "candidate_parameters": [
+        "n",
+        "KM",
+        "translation efficiency"
+      ],
       "param": "translation efficiency",
       "blurb": "the translation efficiency (proteins per transcript)",
       "broken_value": 10.0,
@@ -69,9 +92,11 @@
       "broken_rmsd": 0.227,
       "fit": {
         "fitted": {
+          "n": 2.0,
+          "KM": 40.0,
           "translation efficiency": 20.0
         },
-        "resim_rmsd": 3e-06,
+        "resim_rmsd": 1.1e-05,
         "matched": true,
         "method": "Levenberg - Marquardt"
       },
@@ -84,12 +109,115 @@
           "translation efficiency": 10.0
         }
       }
+    },
+    {
+      "break_id": "repair-04",
+      "model": "stemcell",
+      "model_label": "Chickarmane 2006 stem-cell switch \u2014 the OCT4/SOX2/Nanog pluripotency network",
+      "candidate_parameters": [
+        "a1",
+        "gamma1",
+        "k1c"
+      ],
+      "param": "a1",
+      "blurb": "a synthesis/activation rate constant in the OCT4/SOX2/Nanog network",
+      "broken_value": 2.0,
+      "true_value": 1.0,
+      "broken_rmsd": 0.7916,
+      "fit": {
+        "fitted": {
+          "a1": 1.0,
+          "gamma1": 1.0,
+          "k1c": 0.05
+        },
+        "resim_rmsd": 0.0,
+        "matched": true,
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "a1",
+        "correct": true,
+        "moved_from_broken": {
+          "a1": 1.0,
+          "gamma1": 0.0,
+          "k1c": 0.0
+        }
+      }
+    },
+    {
+      "break_id": "repair-05",
+      "model": "stemcell",
+      "model_label": "Chickarmane 2006 stem-cell switch \u2014 the OCT4/SOX2/Nanog pluripotency network",
+      "candidate_parameters": [
+        "a1",
+        "gamma1",
+        "k1c"
+      ],
+      "param": "gamma1",
+      "blurb": "a degradation-rate constant in the OCT4/SOX2/Nanog network",
+      "broken_value": 2.0,
+      "true_value": 1.0,
+      "broken_rmsd": 0.3121,
+      "fit": {
+        "fitted": {
+          "a1": 1.0,
+          "gamma1": 1.0,
+          "k1c": 0.05
+        },
+        "resim_rmsd": 0.0,
+        "matched": true,
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "gamma1",
+        "correct": true,
+        "moved_from_broken": {
+          "a1": 0.0,
+          "gamma1": 1.0,
+          "k1c": 0.0
+        }
+      }
+    },
+    {
+      "break_id": "repair-06",
+      "model": "stemcell",
+      "model_label": "Chickarmane 2006 stem-cell switch \u2014 the OCT4/SOX2/Nanog pluripotency network",
+      "candidate_parameters": [
+        "a1",
+        "gamma1",
+        "k1c"
+      ],
+      "param": "k1c",
+      "blurb": "a regulatory (binding) rate constant in the OCT4/SOX2/Nanog network",
+      "broken_value": 0.1,
+      "true_value": 0.05,
+      "broken_rmsd": 0.1578,
+      "fit": {
+        "fitted": {
+          "a1": 1.0,
+          "gamma1": 1.0,
+          "k1c": 0.05
+        },
+        "resim_rmsd": 0.0,
+        "matched": true,
+        "method": "Levenberg - Marquardt"
+      },
+      "localize": {
+        "diagnosed_parameter": "k1c",
+        "correct": true,
+        "moved_from_broken": {
+          "a1": 0.0,
+          "gamma1": 0.0,
+          "k1c": 0.05
+        }
+      }
     }
   ],
   "summary": {
-    "n_breaks": 3,
+    "n_models": 2,
+    "n_breaks": 6,
     "all_repaired": true,
     "all_localized_correctly": true,
-    "note": "Each break is repaired by optimization (PE recovers the true value, resim RMSD ~0) and independently DIAGNOSED by the recall-free localization baseline (fit all candidates; the broken one is the one that must move). Break ids are opaque; the reference and broken time-courses are shown on the card. Celebrity-ness of the model no longer helps \u2014 the oracle is an optimizer, not recall."
+    "note": "The suite spans two structurally different, independently vetted gene-regulatory circuits (a synthetic bacterial oscillator and a mammalian pluripotency switch). Each break is repaired by optimization (PE recovers the true value, resim RMSD ~0) and DIAGNOSED by the recall-free localization baseline (fit all candidates; the broken one is the one that must move). Break ids are opaque; the reference + broken time-courses are exposed on the task card. Celebrity-ness no longer helps \u2014 the oracle is an optimizer, not recall."
   }
 }
