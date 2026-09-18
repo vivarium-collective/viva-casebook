@@ -15,6 +15,8 @@ any single paper or model.
 > 🧫 And where it matters — [**Diauxie: a task the policy can't solve**](docs/diauxie-agent-vs-policy.html): the policy consumes both substrates but gets the *regulation* wrong and gives up at 3/4; the LLM reasons that the fix is catabolite repression and reaches 4/4.
 > 📊 Also: the [model-sourcing scorecard](docs/status.html).
 
+> 🔬 **[Explore the interactive read-only workbench →](https://vivarium-collective.github.io/viva-casebook/dashboard/)** — every investigation, study, composite, and run, browsable in the browser with no server. A self-contained static snapshot of the vivarium-workbench, published from `main` alongside these reports.
+
 The framework itself lives in
 [viva-superpowers](https://github.com/vivarium-collective/viva-superpowers)
 (`loop_state`, `module_sourcing`, `test_audit`, `benchmark_score`, and the
