@@ -62,7 +62,7 @@
             <span class="dot"></span>3&nbsp;·&nbsp;Evidence
           </span>
           
-          <span class="status-step gate-step axis-evaluation_status gate-state-not-assessed set" title="Gate 4 · Quality">
+          <span class="status-step gate-step axis-evaluation_status gate-state-passed set" title="Gate 4 · Quality">
             <span class="dot"></span>4&nbsp;·&nbsp;Quality
           </span>
           
@@ -100,7 +100,7 @@
           <span class="status-detail-axis">3 · Evidence</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed-with-conditions" title="no verdicts recorded yet + visualization readiness gate (V4)">◆ computed: not_evaluated</span>
+          <span class="gate-computed-chip gate-state-passed-with-conditions" title="completed run + recorded verdicts + visualization readiness gate (V4)">◆ computed: evaluated</span>
           
           
           
@@ -108,11 +108,11 @@
           
         </div>
         
-        <div class="status-detail-row gate-row gate-state-not-assessed">
+        <div class="status-detail-row gate-row gate-state-passed">
           <span class="status-detail-axis">4 · Quality</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-not-assessed" title="no verdicts recorded yet">◆ computed: not_evaluated</span>
+          <span class="gate-computed-chip gate-state-passed" title="completed run + recorded verdicts">◆ computed: evaluated</span>
           
           
           
@@ -201,7 +201,7 @@
   </div>
   <div class="act-cluster" data-act="assurance">
     <div class="act-header">
-      <span class="act-gate-dot" data-gate="assurance" data-gate-state="not-assessed"></span>
+      <span class="act-gate-dot" data-gate="assurance" data-gate-state="passed"></span>
       <span class="act-label">Assurance</span>
     </div>
     <div class="act-tabs">
@@ -592,9 +592,122 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text"></p>
+      <p class="ctr-text">The sourcing audit confirms that composing growth-proc with viva-munk is the right way to source this task: together the two modules cover the required capabilities growth and physics_2d, so source_fit grades within_tol and the gate passes. The composition ran for real (t=3.0; 3 bodies), demonstrating the fit rather than only asserting it.</p>
       
       
+    <div class="overview-section findings-section">
+      <h2 class="overview-label">🔬 Findings — what this study taught us</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The sourcing audit confirms that composing growth-proc with viva-munk is the right way to source this task: together the two modules cover the required capabilities growth and physics_2d, so source_fit grades within_tol and the gate passes. The composition ran for real (t=3.0; 3 bodies), demonstrating the fit rather than only asserting it.</span>
+            
+            <span class="finding-chip">via <code>sourcing-fit</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-01</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> source_fit within_tol, gate=pass; composition ran for real (ran t=3.0; 3 bodies); behavior test &#39;sourcing-fit&#39; == within_tol, gate passed · 
+              
+              via test <a href="#bt-sourcing-fit" onclick="_gotoStudyTab('tests','bt-sourcing-fit');return false;"><code>sourcing-fit</code></a> · 
+              in run <a href="#run-growth-and-push"><code>growth-and-push</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-growth-and-push"><code>growth-and-push</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = within_tol</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The audit confirms the choice to compose rather than reuse a single module: reusing either growth-proc or viva-munk alone would miss a required capability and trip source_fit, while building new where catalogued modules already fit would trip reinvention. Composing the two existing modules avoids both, and the reinvention axis grades within_tol.</span>
+            
+            <span class="finding-chip">via <code>no-reinvention</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-02</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> reinvention within_tol; composes two existing modules rather than building new; behavior test &#39;no-reinvention&#39; == within_tol, gate passed · 
+              
+              via test <a href="#bt-no-reinvention" onclick="_gotoStudyTab('tests','bt-no-reinvention');return false;"><code>no-reinvention</code></a> · 
+              in run <a href="#run-growth-and-push"><code>growth-and-push</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-growth-and-push"><code>growth-and-push</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = within_tol</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+    </div>
+    
       
       
       
@@ -1142,7 +1255,7 @@ pass_if: {"op": "==", "provenance": "module_sourcing -\u003e reinvention=within_
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-casebook", basePath: "/viva-casebook/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-casebook/raw/update-readonly-workbench", provenance: {"repo_slug": "vivarium-collective/viva-casebook", "repo_url": "https://github.com/vivarium-collective/viva-casebook", "commit": "787c1d39891f448aca15d18ad4bad144b7f0ef57", "commit_url": "https://github.com/vivarium-collective/viva-casebook/commit/787c1d39891f448aca15d18ad4bad144b7f0ef57", "branch": "update-readonly-workbench", "generated_at": "2026-09-18 15:14 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-casebook", basePath: "/viva-casebook/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-casebook/raw/complete-study-findings", provenance: {"repo_slug": "vivarium-collective/viva-casebook", "repo_url": "https://github.com/vivarium-collective/viva-casebook", "commit": "0c6a72072c922d453009f18c3d568cce05595aa5", "commit_url": "https://github.com/vivarium-collective/viva-casebook/commit/0c6a72072c922d453009f18c3d568cce05595aa5", "branch": "complete-study-findings", "generated_at": "2026-09-18 16:21 UTC"} };</script>
 <script src="/viva-casebook/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "growth-and-push";

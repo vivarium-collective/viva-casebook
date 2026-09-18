@@ -2,6 +2,6 @@
   "mode": "snapshot",
   "smsApiBase": "",
   "repo": "https://github.com/vivarium-collective/viva-casebook.git",
-  "commit": "787c1d39891f448aca15d18ad4bad144b7f0ef57",
-  "generated_from_ref": "update-readonly-workbench"
+  "commit": "0c6a72072c922d453009f18c3d568cce05595aa5",
+  "generated_from_ref": "complete-study-findings"
 }

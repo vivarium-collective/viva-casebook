@@ -76,4 +76,51 @@ conclusion: '## Final model
   at B and adding B→C so the terminal product accumulates. Every verdict is from real COPASI simulation
   (validity, load, steady state, conservation, terminal product). The deterministic policy GAVE UP at
   0/5: authoring an SBML network is not an install. See docs/sbml-agent-vs-policy.html.'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The agent-authored SBML kinetic model (libsbml) of the A->B->C pathway loads and simulates
+    in the REAL COPASI backend (basico, via viva-copasi). Every verdict — validity, load, steady state,
+    conservation, terminal product — is read from an actual COPASI simulation, not a mock; the
+    deterministic policy gave up at 0/5 because authoring an SBML network is not an install.'
+  evidence:
+    from_test: copasi-loads
+    from_run: sbml-agent
+    observed: 'SBML model loaded + simulated in the real COPASI (basico) backend; behavior test
+      ''copasi-loads'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - sbml-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The linear metabolic pathway A->B->C, built from mass-action reactions, runs to a valid
+    steady state in COPASI with total mass conserved — the closed mass-action network neither creates
+    nor loses material over the simulation.'
+  evidence:
+    from_test: mass-conserved
+    from_run: sbml-agent
+    observed: 'total mass conserved across the A->B->C pathway at steady state; behavior test
+      ''mass-conserved'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - sbml-agent
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The terminal product C accumulates as the dominant species. The agent recognised after
+    building A->B that the pathway stopped at B and added the B->C reaction, so material flows through
+    to the terminus rather than pooling at the intermediate.'
+  evidence:
+    from_test: terminal-product
+    from_run: sbml-agent
+    observed: 'terminal product C accumulates as the dominant species; behavior test ''terminal-product''
+      == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - sbml-agent
 loop_provenance: sbml-agent

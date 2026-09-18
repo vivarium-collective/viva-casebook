@@ -54,4 +54,37 @@ conclusion: '## Final model
   n≥2) and added it, opening two basins (state separation 3.46). The deterministic policy tuned expression
   (a knob), stayed monostable (separation 0), and gave up: bistability is a structural property no single
   knob tunes into being. See docs/bistable-agent-vs-policy.html.'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Cooperative (Hill n=2) mutual repression between two genes A and B destabilises the
+    symmetric fixed point and opens two distinct stable basins, so the composite settles into one of
+    two decisive states rather than a graded midpoint. Confirmed: the agent-built ToggleSwitch reaches
+    a state separation of 3.46 between the two basins, where the deterministic policy — which only
+    tuned expression strength, a knob — stayed monostable at separation 0.'
+  evidence:
+    from_test: bistable
+    from_run: bistable-agent
+    observed: 'state separation 3.46 between the two settled states (vs 0 for the monostable
+      expression-tuning policy); behavior test ''bistable'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - bistable-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The switch latches to whichever gene starts ahead, resolving to a single dominant gene
+    rather than relaxing to a symmetric midpoint — the decisive toggle the task requires. The same
+    cooperative feedback makes this self-reinforcing: once one basin is entered it is held.'
+  evidence:
+    from_test: decisive
+    from_run: bistable-agent
+    observed: 'the composite resolves to one dominant gene with no graded midpoint; behavior test
+      ''decisive'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - bistable-agent
 loop_provenance: bistable-agent

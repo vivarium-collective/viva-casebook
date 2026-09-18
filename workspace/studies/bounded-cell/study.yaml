@@ -84,4 +84,51 @@ conclusion: '## Final model
 
   DONE in 4 edits (LLM agent) — a real process-bigraph composite, integrity clean. The deterministic policy
   also solved it in 5.'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The cell grows its biomass on the nutrient it consumes, with Monod-saturating uptake
+    feeding a yield-based growth step (MonodUptake + YieldGrowth). Growth rises with available
+    nutrient but saturates rather than growing without bound, matching the intended Monod-limited
+    phenotype. This confirms a bounded, goal-directed growth response driven by what the cell actually
+    takes up.'
+  evidence:
+    from_test: growth
+    from_run: bounded-cell-agent
+    observed: 'biomass grows on consumed nutrient via MonodUptake + YieldGrowth; behavior test ''growth'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - bounded-cell-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Growth is mass-conserving: the nutrient the cell consumes is accounted for as biomass
+    gained rather than created or destroyed, and the finite nutrient pool is depleted as biomass
+    accumulates. The MonodUptake and YieldGrowth processes are wired over the shared
+    biomass/nutrient/uptake_flux stores so uptake and growth stay balanced.'
+  evidence:
+    from_test: conservation
+    from_run: bounded-cell-agent
+    observed: 'consumed nutrient is conserved as biomass across the biomass/nutrient/uptake_flux stores; behavior test ''conservation'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - bounded-cell-agent
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'On a rising temperature ramp, viability holds while the cell is below its temperature
+    tolerance and then collapses once temperature exceeds it. The ThermalDeath process with
+    t_tol=43 degC produces this viability cliff, driven by the TemperatureRamp over the shared
+    temperature and viability stores.'
+  evidence:
+    from_test: viability-cliff
+    from_run: bounded-cell-agent
+    observed: 'viability holds below t_tol=43 degC then collapses once temperature exceeds it (ThermalDeath); behavior test ''viability-cliff'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - bounded-cell-agent
 loop_provenance: bounded-cell-agent

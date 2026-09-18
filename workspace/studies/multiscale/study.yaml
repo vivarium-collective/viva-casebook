@@ -72,4 +72,51 @@ conclusion: '## Final model
   DONE (4/4) — the LLM agent recognised the two models were decoupled and AUTHORED a translator, reasoning
   the unit conversion (mol/time → mM/time over the compartment volume) needed to conserve mass. The deterministic
   policy GAVE UP at 1/4: ''author a translator'' is not an install it can express. See docs/multiscale-agent-vs-policy.html.'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The cell-scale CellMetabolism process is active as a metabolite source, secreting a flux
+    in mol/time. This is the upstream half of the two-scale coupling — the cell whose secretion must
+    source the tissue field.'
+  evidence:
+    from_test: cell-active
+    from_run: multiscale-agent
+    observed: 'CellMetabolism secretes a metabolite flux (mol/time); behavior test ''cell-active'' ==
+      within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multiscale-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'An agent-authored FluxTranslator maps the cell''s secreted flux onto the DiffusionField''s
+    per-grid source, so the cell''s secretion sources the 1-D concentration field (mM) and a diffusion
+    gradient forms around the cell across the scale interface. The deterministic policy gave up at 1/4
+    because ''author a translator'' is not an install it can express.'
+  evidence:
+    from_test: coupled-gradient
+    from_run: multiscale-agent
+    observed: 'cell secretion sources the 1-D diffusion field and a gradient forms around the cell;
+      behavior test ''coupled-gradient'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multiscale-agent
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The FluxTranslator carries the unit conversion (mol/time -> mM/time over the compartment
+    volume, i.e. divide by volume) that conserves total mass across the cell-to-tissue scale interface,
+    so no mass is created or lost when the cell''s flux becomes the field''s source.'
+  evidence:
+    from_test: flux-conserved
+    from_run: multiscale-agent
+    observed: 'unit conversion (divide by volume) conserves mass across the scale interface; behavior
+      test ''flux-conserved'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multiscale-agent
 loop_provenance: multiscale-agent

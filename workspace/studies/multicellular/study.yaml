@@ -61,4 +61,50 @@ conclusion: '## Final model
   The phenotype (near STEM, far DIFFERENTIATED) is produced by the CPM composite. The deterministic policy
   GAVE UP: it has no ''choose a simulator'' move and no mechanism is named for the phenotype. Selecting
   CPM + composing the subcell is the LLM''s job.'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The phenotype requires a simulator that supports a lattice, diffusing fields, and cell
+    fate together; the agent selected CPM (viva-cpm), which provides all three. This ''choose a
+    simulator'' move is exactly what the deterministic policy could not express, so it gave up.'
+  evidence:
+    from_test: simulator-fit
+    from_run: multicell-agent
+    observed: 'chosen CPM (viva-cpm) simulator supports lattice + fields + cell fate; behavior test
+      ''simulator-fit'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multicell-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The composite instantiates a multicellular tissue of at least four cells on the CPM
+    lattice — a Wnt-secreting niche plus progenitor cells — rather than a single-cell model, giving
+    the spatial substrate a differentiation gradient can form over.'
+  evidence:
+    from_test: multicellular
+    from_run: multicell-agent
+    observed: 'a multicellular tissue (>=4 cells) on the CPM lattice; behavior test ''multicellular''
+      == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multicell-agent
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'A diffusing Wnt field emanates from the secreting niche, and a StemnessFate subcell in
+    each cell reads its local Wnt level to set fate: cells near the niche stay STEM while distal cells
+    become DIFFERENTIATED, producing the spatial differentiation gradient the task requires.'
+  evidence:
+    from_test: differentiation-gradient
+    from_run: multicell-agent
+    observed: 'near STEM, far DIFFERENTIATED spatial gradient produced by the CPM composite; behavior
+      test ''differentiation-gradient'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - multicell-agent
 loop_provenance: multicell-agent

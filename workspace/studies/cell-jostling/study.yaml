@@ -71,3 +71,37 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The sourcing audit confirms that reusing viva-munk is the right way to source this task:
+    the module''s capabilities cover the required capabilities physics_2d, rigid_body and collision, so
+    source_fit grades within_tol and the gate passes. pymunk 2D rigid-body physics is exactly cell jostling,
+    and the module ran for real (t=3.0; 3 bodies) rather than staying audit-only, so the reuse decision
+    is a demonstrated fit.'
+  evidence:
+    from_test: sourcing-fit
+    from_run: cell-jostling
+    observed: 'source_fit within_tol, gate=pass; module ran for real (ran t=3.0; 3 bodies); behavior
+      test ''sourcing-fit'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - cell-jostling
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The audit confirms no reinvention: because a pymunk 2D rigid-body physics engine already
+    exists as the catalogued viva-munk module, building a new one would trip the reinvention axis, but
+    the reuse decision avoids that and reinvention grades within_tol. This is exactly the case the audit
+    is designed to catch — build-new where a catalogued module already fits.'
+  evidence:
+    from_test: no-reinvention
+    from_run: cell-jostling
+    observed: 'reinvention within_tol; reuse avoids building a physics engine that already exists;
+      behavior test ''no-reinvention'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - cell-jostling

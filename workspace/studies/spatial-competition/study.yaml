@@ -97,3 +97,36 @@ followup_proposals:
     into the shared workspace core, so community_dfba builds and runs on it. spatial-competition now executes
     for real (glucose 10.0->8.31, acetate 0.0->0.083) instead of audit-only — no separate child study
     needed.'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The sourcing audit confirms that reusing spatio-flux is the right way to source this task:
+    the module''s spatial dFBA capabilities cover the required capabilities spatial, dfba and diffusion,
+    so source_fit grades within_tol and the gate passes. The module ran for real — a shared diffusing
+    nutrient is consumed over t=5.0 (glucose 10.0->8.31, acetate 0.0->0.083) — so the reuse decision is
+    a demonstrated fit, not audit-only.'
+  evidence:
+    from_test: sourcing-fit
+    from_run: spatial-competition
+    observed: 'source_fit within_tol, gate=pass; module ran for real (ran t=5.0; glucose 10.0->8.31,
+      acetate 0.0->0.083); behavior test ''sourcing-fit'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - spatial-competition
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The audit confirms no reinvention: spatio-flux already performs spatial dFBA competition,
+    so a non-spatial module would trip source_fit and building new would be unjustified. Reusing the
+    catalogued module leaves the reinvention axis within_tol.'
+  evidence:
+    from_test: no-reinvention
+    from_run: spatial-competition
+    observed: 'reinvention within_tol; reuses catalogued spatial dFBA module rather than building new;
+      behavior test ''no-reinvention'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - spatial-competition
