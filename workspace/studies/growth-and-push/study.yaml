@@ -76,3 +76,36 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (compo
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The sourcing audit confirms that composing growth-proc with viva-munk is the right way to
+    source this task: together the two modules cover the required capabilities growth and physics_2d,
+    so source_fit grades within_tol and the gate passes. The composition ran for real (t=3.0; 3 bodies),
+    demonstrating the fit rather than only asserting it.'
+  evidence:
+    from_test: sourcing-fit
+    from_run: growth-and-push
+    observed: 'source_fit within_tol, gate=pass; composition ran for real (ran t=3.0; 3 bodies);
+      behavior test ''sourcing-fit'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - growth-and-push
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The audit confirms the choice to compose rather than reuse a single module: reusing either
+    growth-proc or viva-munk alone would miss a required capability and trip source_fit, while building
+    new where catalogued modules already fit would trip reinvention. Composing the two existing modules
+    avoids both, and the reinvention axis grades within_tol.'
+  evidence:
+    from_test: no-reinvention
+    from_run: growth-and-push
+    observed: 'reinvention within_tol; composes two existing modules rather than building new; behavior
+      test ''no-reinvention'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - growth-and-push

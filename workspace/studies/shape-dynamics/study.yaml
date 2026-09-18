@@ -97,3 +97,34 @@ followup_proposals:
     core (inherit_reused_modules), so a minimal Cellular Potts composite runs on it. shape-dynamics now
     executes for real — two cells relax from 36px seed blocks toward target volume 80 (69, 72) under the
     Metropolis Hamiltonian — instead of audit-only.'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The sourcing audit confirms that reusing viva-cpm is the right way to source this task:
+    the module''s capabilities cover the required [cpm, cell_shape, morphology], so the source_fit axis
+    grades within_tol and the gate passes. Building new would instead trip the reinvention axis, since
+    the Cellular Potts shape engine already exists in the catalog.'
+  evidence:
+    from_test: sourcing-fit
+    from_run: shape-dynamics
+    observed: 'source_fit within_tol, reinvention within_tol; behavior test ''sourcing-fit'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - shape-dynamics
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The reused viva-cpm engine runs the modelled system for real rather than by audit alone: two
+    cells relax from 36px seed blocks toward a target volume of 80 under the Metropolis Hamiltonian,
+    reaching cell volumes of [69, 72] over 6 updates as surface energy and adhesion evolve. This
+    demonstrates the reuse decision rather than only grading it.'
+  evidence:
+    from_test: no-reinvention
+    from_run: shape-dynamics
+    observed: 'cell volumes [69, 72] toward target 80 over 6 updates (relaxing from 36); behavior test ''no-reinvention'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - shape-dynamics

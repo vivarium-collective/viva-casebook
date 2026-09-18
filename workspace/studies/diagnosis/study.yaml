@@ -56,4 +56,35 @@ conclusion: '## Final model
   viability crashed → cell dying) and installed the one correct fix. The deterministic policy MISDIAGNOSED:
   it hill-climbed the worst margin, installed boost_yield, growth still failed, and it gave up — a low-growth
   margin alone cannot name the cause. See docs/diagnosis-agent-vs-policy.html.'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Low biomass was caused by the cell DYING, not by a broken yield or uptake pathway — a
+    cause diagnosable only from the joint observables (nutrient fully consumed, so uptake is fine;
+    viability crashed, so the cell is dying). Adding the correct mechanism, stabilize_membrane against
+    the MembraneStress viability decay, restores growth so biomass reaches its target (biomass >= 3.0).'
+  evidence:
+    from_test: growth
+    from_run: diagnosis-agent
+    observed: 'stabilize_membrane fix lifts biomass to the >= 3.0 target once the dying-cell cause is diagnosed; behavior test ''growth'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - diagnosis-agent
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'CellGrowth is gated by viability, so keeping the cell alive is what enables growth. The
+    stabilize_membrane fix arrests the MembraneStress viability decay and holds viability above its
+    survival threshold (viability >= 0.5), which is the precondition the joint observable panel
+    identified for recovery.'
+  evidence:
+    from_test: survives
+    from_run: diagnosis-agent
+    observed: 'stabilize_membrane holds viability >= 0.5 by arresting MembraneStress decay; behavior test ''survives'' == within_tol, gate passed'
+  provenance:
+    run_ids:
+    - diagnosis-agent
 loop_provenance: diagnosis-agent

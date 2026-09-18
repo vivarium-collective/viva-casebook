@@ -71,3 +71,33 @@ conclusion: The sourcing audit graded this task **FAIL**. The chosen module does
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The sourcing audit correctly rejected the tempting-but-wrong reuse of viva-munk: viva-munk
+    provides 2D rigid-body physics (physics_2d) but lacks the spatial structure the task also requires,
+    so the source_fit axis grades mismatch and the gate fails. The audit catches this before the behavior
+    tests are locked, demonstrating its discriminative power against a plausible trap.'
+  evidence:
+    from_test: sourcing-fit
+    from_run: trap-wrong-reuse
+    observed: 'source_fit mismatch; behavior test ''sourcing-fit'' == mismatch, gate failed (wrong module rejected before lock)'
+  provenance:
+    run_ids:
+    - trap-wrong-reuse
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The failure is isolated to the source_fit axis: the reinvention axis grades within_tol,
+    confirming the decision did not build-new where a catalogued module already fits. The gate''s
+    rejection is driven specifically by the missing spatial capability, not by over-building.'
+  evidence:
+    from_test: no-reinvention
+    from_run: trap-wrong-reuse
+    observed: 'reinvention within_tol (failure isolated to source_fit axis); behavior test ''no-reinvention'' == within_tol'
+  provenance:
+    run_ids:
+    - trap-wrong-reuse
