@@ -1,0 +1,17 @@
+# Honest placeholder — NOT a process-bigraph composite. The sbml study's model is
+# an agent-authored SBML reaction network (A->B->C, mass-action) loaded and
+# simulated in the REAL COPASI backend (basico / viva-copasi). It has no
+# process-bigraph wiring to render here; the evidence lives in the study's tests
+# (validity, load, steady state, conservation, terminal product) and its
+# visualization (species trajectories to C-dominance). This spec exists only so
+# the Model tab shows an honest explanation instead of "could not resolve".
+name: sbml
+description: 'No bigraph wiring: the model is an agent-authored SBML network (A->B->C) run in
+  the real COPASI backend (basico/viva-copasi), not a process-bigraph composite. See the study''s
+  tests and its visualization for the evidence.'
+tags:
+- agentic-challenges
+- sbml
+- copasi
+requires: {}
+state: {}

@@ -57,8 +57,8 @@ if _env and Path(_env).is_dir():
     REPO = Path(_env)
 if REPO is None:
     REPO = _find_repo_root(Path.cwd().resolve())
-if REPO is None and Path('/Users/eranagmon/code/viva-casebook--study-visualizations').is_dir():
-    REPO = Path('/Users/eranagmon/code/viva-casebook--study-visualizations')
+if REPO is None and Path('/Users/eranagmon/code/viva-casebook--composites').is_dir():
+    REPO = Path('/Users/eranagmon/code/viva-casebook--composites')
 if REPO is None:
     REPO = Path.cwd()
 sys.path.insert(0, str(REPO))
@@ -161,7 +161,33 @@ def _render_one(address, config, runs_db, study_yaml):
 
 # **Composite `viva_casebook.composites.bounded-cell`** — `spec_viva_casebook_composites_bounded_cell` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.bounded-cell` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_bounded_cell = load_spec(REPO / 'viva_casebook/composites/bounded-cell.composite.yaml')
+describe_spec(spec_viva_casebook_composites_bounded_cell)
+
+# === Edit parameters for composite 'bounded-cell' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'ramp'  (local:TemperatureRamp)
+spec_viva_casebook_composites_bounded_cell['state']['ramp']['interval'] = 0.02
+spec_viva_casebook_composites_bounded_cell['state']['ramp']['config']['t_start'] = 37.0
+spec_viva_casebook_composites_bounded_cell['state']['ramp']['config']['t_end'] = 50.0
+spec_viva_casebook_composites_bounded_cell['state']['ramp']['config']['duration'] = 8.0
+
+# process 'monod'  (local:MonodUptake)
+spec_viva_casebook_composites_bounded_cell['state']['monod']['interval'] = 0.02
+spec_viva_casebook_composites_bounded_cell['state']['monod']['config']['qmax'] = 3.0
+spec_viva_casebook_composites_bounded_cell['state']['monod']['config']['Ks'] = 0.02
+
+# process 'growth'  (local:YieldGrowth)
+spec_viva_casebook_composites_bounded_cell['state']['growth']['interval'] = 0.02
+spec_viva_casebook_composites_bounded_cell['state']['growth']['config']['Y'] = 0.45
+
+# process 'thermal'  (local:ThermalDeath)
+spec_viva_casebook_composites_bounded_cell['state']['thermal']['interval'] = 0.02
+spec_viva_casebook_composites_bounded_cell['state']['thermal']['config']['t_tol'] = 43.0
+spec_viva_casebook_composites_bounded_cell['state']['thermal']['config']['k_death'] = 0.8
 
 # ### Run
 #
@@ -221,7 +247,30 @@ _save_viz('bounded-cell', 'Bounded_growth_vs_the_thermal_viability_cliff', _rend
 
 # **Composite `viva_casebook.composites.diauxie`** — `spec_viva_casebook_composites_diauxie` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.diauxie` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_diauxie = load_spec(REPO / 'viva_casebook/composites/diauxie.composite.yaml')
+describe_spec(spec_viva_casebook_composites_diauxie)
+
+# === Edit parameters for composite 'diauxie' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'gu'  (local:GlucoseUptake)
+spec_viva_casebook_composites_diauxie['state']['gu']['interval'] = 0.02
+spec_viva_casebook_composites_diauxie['state']['gu']['config']['Vg'] = 2.0
+spec_viva_casebook_composites_diauxie['state']['gu']['config']['Kg'] = 0.5
+spec_viva_casebook_composites_diauxie['state']['gu']['config']['Y'] = 0.45
+
+# process 'lu'  (local:LactoseUptake)
+spec_viva_casebook_composites_diauxie['state']['lu']['interval'] = 0.02
+spec_viva_casebook_composites_diauxie['state']['lu']['config']['Vl'] = 2.0
+spec_viva_casebook_composites_diauxie['state']['lu']['config']['Kl'] = 0.5
+spec_viva_casebook_composites_diauxie['state']['lu']['config']['Y'] = 0.45
+
+# process 'cr'  (local:CataboliteRepression)
+spec_viva_casebook_composites_diauxie['state']['cr']['interval'] = 0.02
+spec_viva_casebook_composites_diauxie['state']['cr']['config']['Ki'] = 0.5
+spec_viva_casebook_composites_diauxie['state']['cr']['config']['n'] = 4.0
 
 # ### Run
 #
@@ -271,7 +320,86 @@ _save_viz('diauxie', 'Diauxic_shift_glucose_lactose', _render_one('local:Diauxic
 
 # **Composite `viva_casebook.composites.multicellular`** — `spec_viva_casebook_composites_multicellular` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.multicellular` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_multicellular = load_spec(REPO / 'viva_casebook/composites/multicellular.composite.yaml')
+describe_spec(spec_viva_casebook_composites_multicellular)
+
+# === Edit parameters for composite 'multicellular' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'cpm'  (local:CPMProcess)
+spec_viva_casebook_composites_multicellular['state']['cpm']['interval'] = 1.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['potts']['dims'] = [44, 44, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['potts']['boundary'] = 'noflux'
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['potts']['neighbor_order'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['potts']['temperature'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['potts']['seed'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['type'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['target_volume'] = 36.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['target_surface'] = 28.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][0]['seed_block'] = [2, 18, 0, 8, 24, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['type'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['target_volume'] = 30.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['target_surface'] = 26.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][1]['seed_block'] = [12, 18, 0, 17, 24, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['type'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['target_volume'] = 30.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['target_surface'] = 26.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][2]['seed_block'] = [19, 18, 0, 24, 24, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['type'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['target_volume'] = 30.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['target_surface'] = 26.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][3]['seed_block'] = [26, 18, 0, 31, 24, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['type'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['target_volume'] = 30.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['target_surface'] = 26.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['cells'][4]['seed_block'] = [33, 18, 0, 38, 24, 1]
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][0]['a'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][0]['b'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][0]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][1]['a'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][1]['b'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][1]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][2]['a'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][2]['b'] = 3
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][2]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][3]['a'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][3]['b'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][3]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][4]['a'] = 2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][4]['b'] = 3
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][4]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][5]['a'] = 3
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][5]['b'] = 3
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['contact'][5]['j'] = 8.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['name'] = 'Wnt'
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['d'] = 0.2
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['decay'] = 0.01
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['secretion'][0]['type'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['secretion'][0]['rate'] = 3.0
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['spec']['fields'][0]['chemotaxis'] = []
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['mcs_per_update'] = 6
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['n_fields'] = 1
+spec_viva_casebook_composites_multicellular['state']['cpm']['config']['secretory_types'] = [1]
+
+# process 'fate'  (local:StemnessFate)
+spec_viva_casebook_composites_multicellular['state']['fate']['interval'] = 1.0
+spec_viva_casebook_composites_multicellular['state']['fate']['config']['wnt_threshold'] = 0.3
+spec_viva_casebook_composites_multicellular['state']['fate']['config']['hill_n'] = 4.0
+spec_viva_casebook_composites_multicellular['state']['fate']['config']['source_type'] = 1
+spec_viva_casebook_composites_multicellular['state']['fate']['config']['stem_type'] = 2
+spec_viva_casebook_composites_multicellular['state']['fate']['config']['diff_type'] = 3
 
 # ### Run
 #
@@ -320,7 +448,13 @@ _save_viz('multicellular', 'Differentiation_gradient', _render_one('local:Differ
 
 # **Composite `viva_casebook.composites.sbml`** — `spec_viva_casebook_composites_sbml` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.sbml` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_sbml = load_spec(REPO / 'viva_casebook/composites/sbml.composite.yaml')
+describe_spec(spec_viva_casebook_composites_sbml)
+
+# === Edit parameters for composite 'sbml' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
 
 # ### Run
 #
@@ -371,7 +505,31 @@ _save_viz('sbml', 'A_B_C_trajectories', _render_one('local:PathwayTrajectories',
 
 # **Composite `viva_casebook.composites.multiscale`** — `spec_viva_casebook_composites_multiscale` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.multiscale` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_multiscale = load_spec(REPO / 'viva_casebook/composites/multiscale.composite.yaml')
+describe_spec(spec_viva_casebook_composites_multiscale)
+
+# === Edit parameters for composite 'multiscale' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'cell'  (local:CellMetabolism)
+spec_viva_casebook_composites_multiscale['state']['cell']['interval'] = 1.0
+spec_viva_casebook_composites_multiscale['state']['cell']['config']['k_grow'] = 0.05
+spec_viva_casebook_composites_multiscale['state']['cell']['config']['k_secrete'] = 0.5
+spec_viva_casebook_composites_multiscale['state']['cell']['config']['volume'] = 2.0
+
+# process 'fld'  (local:DiffusionField)
+spec_viva_casebook_composites_multiscale['state']['fld']['interval'] = 1.0
+spec_viva_casebook_composites_multiscale['state']['fld']['config']['D'] = 0.3
+spec_viva_casebook_composites_multiscale['state']['fld']['config']['decay'] = 0.02
+
+# process 'tr'  (local:FluxTranslator)
+spec_viva_casebook_composites_multiscale['state']['tr']['interval'] = 1.0
+spec_viva_casebook_composites_multiscale['state']['tr']['config']['grid_n'] = 11
+spec_viva_casebook_composites_multiscale['state']['tr']['config']['cell_position'] = 5
+spec_viva_casebook_composites_multiscale['state']['tr']['config']['volume'] = 2.0
+spec_viva_casebook_composites_multiscale['state']['tr']['config']['apply_unit_conversion'] = True
 
 # ### Run
 #
@@ -421,7 +579,19 @@ _save_viz('multiscale', 'Flux-to-field_gradient', _render_one('local:FluxFieldGr
 
 # **Composite `viva_casebook.composites.diagnosis`** — `spec_viva_casebook_composites_diagnosis` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.diagnosis` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_diagnosis = load_spec(REPO / 'viva_casebook/composites/diagnosis.composite.yaml')
+describe_spec(spec_viva_casebook_composites_diagnosis)
+
+# === Edit parameters for composite 'diagnosis' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'growth'  (local:CellGrowth)
+spec_viva_casebook_composites_diagnosis['state']['growth']['interval'] = 1.0
+spec_viva_casebook_composites_diagnosis['state']['growth']['config']['qmax'] = 1.5
+spec_viva_casebook_composites_diagnosis['state']['growth']['config']['Ks'] = 0.5
+spec_viva_casebook_composites_diagnosis['state']['growth']['config']['Y'] = 0.4
 
 # ### Run
 #
@@ -469,7 +639,20 @@ _save_viz('diagnosis', 'Before_vs_after_stabilize_membrane', _render_one('local:
 
 # **Composite `viva_casebook.composites.bistable`** — `spec_viva_casebook_composites_bistable` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.bistable` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_bistable = load_spec(REPO / 'viva_casebook/composites/bistable.composite.yaml')
+describe_spec(spec_viva_casebook_composites_bistable)
+
+# === Edit parameters for composite 'bistable' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'sw'  (local:ToggleSwitch)
+spec_viva_casebook_composites_bistable['state']['sw']['interval'] = 0.05
+spec_viva_casebook_composites_bistable['state']['sw']['config']['beta'] = 4.0
+spec_viva_casebook_composites_bistable['state']['sw']['config']['K'] = 1.0
+spec_viva_casebook_composites_bistable['state']['sw']['config']['n'] = 2.0
+spec_viva_casebook_composites_bistable['state']['sw']['config']['deg'] = 1.0
 
 # ### Run
 #

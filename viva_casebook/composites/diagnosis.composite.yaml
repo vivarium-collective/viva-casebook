@@ -1,0 +1,40 @@
+# The diagnosis study's concluded (fixed) model. The baseline cell is dying from
+# membrane stress; the agent's fix — stabilize_membrane — removes the stressor,
+# so the final passing model is CellGrowth alone holding viability while biomass
+# grows on the consumed nutrient. Wiring is the exact `simulate()` state from
+# scripts/diagnosis_task.py with the concluding (stabilize_membrane) config.
+name: diagnosis
+description: 'Ambiguous diagnosis — the concluded fix: a growth-on-nutrient cell whose viability
+  is held once the membrane stressor is removed (stabilize_membrane), so biomass reaches target.'
+tags:
+- agentic-challenges
+- diagnosis
+- metabolism
+requires:
+  processes:
+  - CellGrowth
+  - MembraneStress
+state:
+  biomass: 0.5
+  nutrient: 10.0
+  viability: 1.0
+  growth:
+    _type: process
+    address: local:CellGrowth
+    config:
+      qmax: 1.5
+      Ks: 0.5
+      Y: 0.4
+    inputs:
+      nutrient:
+      - nutrient
+      biomass:
+      - biomass
+      viability:
+      - viability
+    outputs:
+      nutrient:
+      - nutrient
+      biomass:
+      - biomass
+    interval: 1.0

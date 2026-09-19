@@ -31,7 +31,7 @@ sourcing:
     catches_if_wrong: a non-spatial module → `source_fit` mismatch.
 baseline:
 - name: spatio-flux
-  composite: viva_casebook.composites.spatial-competition
+  composite: spatio_flux.composites.metabolism.community_dfba
   module: spatio-flux
   domain: spatial dFBA metabolism
   params: {}
