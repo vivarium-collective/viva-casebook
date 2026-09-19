@@ -1,0 +1,88 @@
+# The bounded-cell study's concluded (passing) model. The agentic loop compiled
+# an inert draft into a running cell by installing three mechanism processes and
+# calibrating the thermal tolerance until all five hard acceptance tests pass.
+# Wiring is the exact `simulate()` state from scripts/build_loop_demo.py with all
+# mechanisms active (monod_uptake, yield_growth, thermal_death) at their
+# literature-grounded default knobs and the concluded t_tol=43 C (as the study
+# conclusion / biological_summary describe).
+name: bounded-cell
+description: 'A bounded, goal-directed cell — TemperatureRamp + MonodUptake + YieldGrowth
+  + ThermalDeath (t_tol=43 C): biomass grows on the nutrient it consumes (mass-conserving,
+  Monod-saturating) while viability holds below the temperature tolerance then collapses
+  once the rising temperature exceeds it.'
+tags:
+- agentic-challenges
+- bounded-cell
+- metabolism
+requires:
+  processes:
+  - TemperatureRamp
+  - MonodUptake
+  - YieldGrowth
+  - ThermalDeath
+state:
+  nutrient: 10.0
+  biomass: 0.5
+  viability: 1.0
+  temperature: 37.0
+  uptake_flux: 0.0
+  ramp:
+    _type: process
+    address: local:TemperatureRamp
+    config:
+      t_start: 37.0
+      t_end: 50.0
+      duration: 8.0
+    inputs:
+      temperature:
+      - temperature
+    outputs:
+      temperature:
+      - temperature
+    interval: 0.02
+  monod:
+    _type: process
+    address: local:MonodUptake
+    config:
+      qmax: 3.0
+      Ks: 0.02
+    inputs:
+      nutrient:
+      - nutrient
+      biomass:
+      - biomass
+      uptake_flux:
+      - uptake_flux
+    outputs:
+      nutrient:
+      - nutrient
+      uptake_flux:
+      - uptake_flux
+    interval: 0.02
+  growth:
+    _type: process
+    address: local:YieldGrowth
+    config:
+      Y: 0.45
+    inputs:
+      uptake_flux:
+      - uptake_flux
+    outputs:
+      biomass:
+      - biomass
+    interval: 0.02
+  thermal:
+    _type: process
+    address: local:ThermalDeath
+    config:
+      t_tol: 43.0
+      k_death: 0.8
+    inputs:
+      temperature:
+      - temperature
+      viability:
+      - viability
+    outputs:
+      viability:
+      - viability
+    interval: 0.02

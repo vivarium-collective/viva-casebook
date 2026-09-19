@@ -1,0 +1,15 @@
+# Honest placeholder — there is NO existing composite by design. The
+# novel-mechanism study's required capabilities (quantum_signal, exotic_transport)
+# are covered by no catalogued module, so the sourcing decision is BUILD-NEW and
+# the audit confirms it (novelty_justified within_tol). There is nothing to reuse
+# or render; this spec exists only so the Model tab shows an honest explanation
+# instead of "could not resolve".
+name: novel-mechanism
+description: 'No existing composite by design: required capabilities (quantum_signal,
+  exotic_transport) match no catalogued module, so the audited sourcing decision is build-new.
+  There is nothing to reuse; see the sourcing audit and the study''s visualization.'
+tags:
+- model-sourcing
+- build-new
+requires: {}
+state: {}

@@ -1,0 +1,95 @@
+# The multiscale study's concluded model — the real Composite from
+# scripts/multiscale_task.simulate() with all three processes active and
+# unit_conversion=True (N=11, DT=1.0, VOL=2.0). CellMetabolism (a cell secreting a
+# metabolite flux, mol/time) + DiffusionField (a 1-D concentration field, mM)
+# coupled by a FluxTranslator that maps the cell's flux to the field's per-grid
+# source with the unit conversion (÷volume) that conserves mass across the scale
+# interface. Wiring is the exact simulate() state with all mechanisms installed.
+name: multiscale
+description: 'A two-scale process-bigraph Composite: CellMetabolism (secreting a metabolite flux) +
+  DiffusionField (a 1-D concentration field) coupled by an authored FluxTranslator that maps flux to
+  the field''s per-grid source with the ÷volume unit conversion that conserves mass across the interface.'
+tags:
+- agentic-challenges
+- multiscale
+- coupling
+requires:
+  processes:
+  - CellMetabolism
+  - DiffusionField
+  - FluxTranslator
+state:
+  biomass: 0.5
+  secretion_flux: 0.0
+  field:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  field_source:
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  - 0.0
+  cell:
+    _type: process
+    address: local:CellMetabolism
+    config:
+      k_grow: 0.05
+      k_secrete: 0.5
+      volume: 2.0
+    inputs:
+      biomass:
+      - biomass
+      secretion_flux:
+      - secretion_flux
+    outputs:
+      biomass:
+      - biomass
+      secretion_flux:
+      - secretion_flux
+    interval: 1.0
+  fld:
+    _type: process
+    address: local:DiffusionField
+    config:
+      D: 0.3
+      decay: 0.02
+    inputs:
+      field:
+      - field
+      field_source:
+      - field_source
+    outputs:
+      field:
+      - field
+    interval: 1.0
+  tr:
+    _type: process
+    address: local:FluxTranslator
+    config:
+      grid_n: 11
+      cell_position: 5
+      volume: 2.0
+      apply_unit_conversion: true
+    inputs:
+      secretion_flux:
+      - secretion_flux
+    outputs:
+      field_source:
+      - field_source
+    interval: 1.0

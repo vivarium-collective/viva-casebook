@@ -59,8 +59,8 @@ if _env and Path(_env).is_dir():
     REPO = Path(_env)
 if REPO is None:
     REPO = _find_repo_root(Path.cwd().resolve())
-if REPO is None and Path('/Users/eranagmon/code/viva-casebook--study-visualizations').is_dir():
-    REPO = Path('/Users/eranagmon/code/viva-casebook--study-visualizations')
+if REPO is None and Path('/Users/eranagmon/code/viva-casebook--composites').is_dir():
+    REPO = Path('/Users/eranagmon/code/viva-casebook--composites')
 if REPO is None:
     REPO = Path.cwd()
 sys.path.insert(0, str(REPO))
@@ -157,15 +157,15 @@ def _render_one(address, config, runs_db, study_yaml):
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `viva-munk` | `viva_casebook.composites.cell-jostling` | 0 | — |
+# | `viva-munk` | `viva_munk.composites.biofilm` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_casebook.composites.cell-jostling`** — `spec_viva_casebook_composites_cell_jostling` (a plain, editable dict)
+# **Composite `viva_munk.composites.biofilm`** — `spec_viva_munk_composites_biofilm` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.cell-jostling` not found under `viva_casebook/composites/` — skipped._
+# _composite spec file for `viva_munk.composites.biofilm` not found under `viva_casebook/composites/` — skipped._
 
 # ### Run
 #
@@ -215,16 +215,16 @@ _save_viz('cell-jostling', 'Sourcing_Audit_Report_Card', _render_one('local:Cell
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `growth-proc` | `viva_casebook.composites.growth-and-push` | 0 | — |
-# | `viva-munk` | `viva_casebook.composites.growth-and-push` | 0 | — |
+# | `growth-proc` | `viva_munk.composites.glucose_growth` | 0 | — |
+# | `viva-munk` | `viva_munk.composites.glucose_growth` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_casebook.composites.growth-and-push`** — `spec_viva_casebook_composites_growth_and_push` (a plain, editable dict)
+# **Composite `viva_munk.composites.glucose_growth`** — `spec_viva_munk_composites_glucose_growth` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.growth-and-push` not found under `viva_casebook/composites/` — skipped._
+# _composite spec file for `viva_munk.composites.glucose_growth` not found under `viva_casebook/composites/` — skipped._
 
 # ### Run
 #
@@ -266,15 +266,15 @@ _save_viz('growth-and-push', 'Sourcing_Audit_Report_Card', _render_one('local:Gr
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `spatio-flux` | `viva_casebook.composites.spatial-competition` | 0 | — |
+# | `spatio-flux` | `spatio_flux.composites.metabolism.community_dfba` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_casebook.composites.spatial-competition`** — `spec_viva_casebook_composites_spatial_competition` (a plain, editable dict)
+# **Composite `spatio_flux.composites.metabolism.community_dfba`** — `spec_spatio_flux_composites_metabolism_community_dfba` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.spatial-competition` not found under `viva_casebook/composites/` — skipped._
+# _composite spec file for `spatio_flux.composites.metabolism.community_dfba` not found under `viva_casebook/composites/` — skipped._
 
 # ### Run
 #
@@ -324,7 +324,36 @@ _save_viz('spatial-competition', 'Sourcing_Audit_Report_Card', _render_one('loca
 
 # **Composite `viva_casebook.composites.shape-dynamics`** — `spec_viva_casebook_composites_shape_dynamics` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.shape-dynamics` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_shape_dynamics = load_spec(REPO / 'viva_casebook/composites/shape-dynamics.composite.yaml')
+describe_spec(spec_viva_casebook_composites_shape_dynamics)
+
+# === Edit parameters for composite 'shape-dynamics' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'cpm'  (local:CPMProcess)
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['potts']['dims'] = [40, 40, 1]
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['potts']['boundary'] = 'noflux'
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['potts']['neighbor_order'] = 2
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['potts']['temperature'] = 10.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['potts']['seed'] = 1
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['type'] = 1
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['target_volume'] = 80.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['target_surface'] = 40.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][0]['seed_block'] = [8, 8, 0, 14, 14, 1]
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['type'] = 1
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['target_volume'] = 80.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['lambda_volume'] = 2.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['target_surface'] = 40.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['lambda_surface'] = 0.5
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['cells'][1]['seed_block'] = [24, 24, 0, 30, 30, 1]
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['contact'][0]['a'] = 1
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['contact'][0]['b'] = 1
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['spec']['contact'][0]['j'] = 10.0
+spec_viva_casebook_composites_shape_dynamics['state']['cpm']['config']['mcs_per_update'] = 10
 
 # ### Run
 #
@@ -374,7 +403,13 @@ _save_viz('shape-dynamics', 'Shape_relaxation_toward_target_volume', _render_one
 
 # **Composite `viva_casebook.composites.novel-mechanism`** — `spec_viva_casebook_composites_novel_mechanism` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.novel-mechanism` not found under `viva_casebook/composites/` — skipped._
+from viva_superpowers.composite_spec import load_spec
+spec_viva_casebook_composites_novel_mechanism = load_spec(REPO / 'viva_casebook/composites/novel-mechanism.composite.yaml')
+describe_spec(spec_viva_casebook_composites_novel_mechanism)
+
+# === Edit parameters for composite 'novel-mechanism' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
 
 # ### Run
 #
@@ -416,15 +451,15 @@ _save_viz('novel-mechanism', 'Sourcing_audit_report-card_build-new', _render_one
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `viva-munk` | `viva_casebook.composites.trap-wrong-reuse` | 0 | — |
+# | `viva-munk` | `viva_munk.composites.biofilm` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_casebook.composites.trap-wrong-reuse`** — `spec_viva_casebook_composites_trap_wrong_reuse` (a plain, editable dict)
+# **Composite `viva_munk.composites.biofilm`** — `spec_viva_munk_composites_biofilm` (a plain, editable dict)
 
-# _composite spec file for `viva_casebook.composites.trap-wrong-reuse` not found under `viva_casebook/composites/` — skipped._
+# _composite spec file for `viva_munk.composites.biofilm` not found under `viva_casebook/composites/` — skipped._
 
 # ### Run
 #

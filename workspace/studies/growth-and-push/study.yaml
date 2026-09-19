@@ -31,12 +31,12 @@ sourcing:
     catches_if_wrong: reuse of either alone misses a capability → `source_fit` mismatch.
 baseline:
 - name: growth-proc
-  composite: viva_casebook.composites.growth-and-push
+  composite: viva_munk.composites.glucose_growth
   module: growth-proc
   domain: growth / biomass
   params: {}
 - name: viva-munk
-  composite: viva_casebook.composites.growth-and-push
+  composite: viva_munk.composites.glucose_growth
   module: viva-munk
   domain: 2D rigid-body physics (pymunk)
   params: {}

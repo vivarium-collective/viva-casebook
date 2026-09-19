@@ -1,0 +1,85 @@
+# The diauxie study's concluded (passing) model. The deterministic policy could
+# install the two uptakes but had no mechanism named for the ordering test, so it
+# gave up; the LLM agent reasoned that the sequential shift requires a regulatory
+# COUPLING and added CataboliteRepression — a Hill switch driven by glucose that
+# gates LactoseUptake through the lac_repression store. Wiring is the exact
+# `simulate()` state from scripts/diauxie_demo.py with all three mechanisms active
+# at their literature-grounded default knobs.
+name: diauxie
+description: 'Diauxic growth (glucose then lactose) — GlucoseUptake + LactoseUptake gated
+  by a lac_repression store + CataboliteRepression (a Hill switch driven by glucose). The
+  repression coupling holds lactose uptake off until glucose is exhausted, enforcing the
+  sequential shift rather than simultaneous co-consumption.'
+tags:
+- agentic-challenges
+- diauxie
+- gene-regulation
+requires:
+  processes:
+  - GlucoseUptake
+  - LactoseUptake
+  - CataboliteRepression
+state:
+  glucose: 10.0
+  lactose: 10.0
+  biomass: 0.5
+  lac_repression: 1.0
+  glu_flux: 0.0
+  lac_flux: 0.0
+  gu:
+    _type: process
+    address: local:GlucoseUptake
+    config:
+      Vg: 2.0
+      Kg: 0.5
+      Y: 0.45
+    inputs:
+      glucose:
+      - glucose
+      biomass:
+      - biomass
+    outputs:
+      glucose:
+      - glucose
+      biomass:
+      - biomass
+      glu_flux:
+      - glu_flux
+    interval: 0.02
+  lu:
+    _type: process
+    address: local:LactoseUptake
+    config:
+      Vl: 2.0
+      Kl: 0.5
+      Y: 0.45
+    inputs:
+      lactose:
+      - lactose
+      biomass:
+      - biomass
+      lac_repression:
+      - lac_repression
+    outputs:
+      lactose:
+      - lactose
+      biomass:
+      - biomass
+      lac_flux:
+      - lac_flux
+    interval: 0.02
+  cr:
+    _type: process
+    address: local:CataboliteRepression
+    config:
+      Ki: 0.5
+      n: 4.0
+    inputs:
+      glucose:
+      - glucose
+      lac_repression:
+      - lac_repression
+    outputs:
+      lac_repression:
+      - lac_repression
+    interval: 0.02

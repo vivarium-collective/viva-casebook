@@ -1,0 +1,39 @@
+# The bistable study's concluded (passing) model. The deterministic policy could
+# only tune expression (a knob) and stayed monostable; the LLM agent recognised
+# that two stable basins require COOPERATIVE feedback and made the one structural
+# edit — cooperative_binding → Hill n=2 mutual repression. Wiring is the exact
+# `_run()` state from scripts/bistable_task.py with cooperative_binding active
+# (n=2.0; beta/deg at their non-boosted defaults), in the A-ahead basin.
+name: bistable
+description: 'A genetic toggle switch — two mutually repressing genes A,B with COOPERATIVE
+  (Hill n=2) repression, the structural feature that destabilises the symmetric state and
+  opens two stable basins so the switch latches to whichever gene starts ahead.'
+tags:
+- agentic-challenges
+- bistable
+- gene-regulation
+requires:
+  processes:
+  - ToggleSwitch
+state:
+  A: 3.0
+  B: 0.1
+  sw:
+    _type: process
+    address: local:ToggleSwitch
+    config:
+      beta: 4.0
+      K: 1.0
+      n: 2.0
+      deg: 1.0
+    inputs:
+      A:
+      - A
+      B:
+      - B
+    outputs:
+      A:
+      - A
+      B:
+      - B
+    interval: 0.05
