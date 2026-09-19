@@ -61,6 +61,11 @@ conclusion: '## Final model
   The phenotype (near STEM, far DIFFERENTIATED) is produced by the CPM composite. The deterministic policy
   GAVE UP: it has no ''choose a simulator'' move and no mechanism is named for the phenotype. Selecting
   CPM + composing the subcell is the LLM''s job.'
+visualizations:
+- name: Differentiation gradient
+  address: local:DifferentiationGradient
+  chart: viz/differentiation_gradient.html
+  description: Cell fate vs distance from the Wnt-secreting niche — near cells stay STEM, distal cells DIFFERENTIATE across the Wnt gradient with the StemnessFate threshold marked.
 findings:
 - id: F-01
   kind: computational

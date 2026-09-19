@@ -56,6 +56,11 @@ conclusion: '## Final model
   viability crashed → cell dying) and installed the one correct fix. The deterministic policy MISDIAGNOSED:
   it hill-climbed the worst margin, installed boost_yield, growth still failed, and it gave up — a low-growth
   margin alone cannot name the cause. See docs/diagnosis-agent-vs-policy.html.'
+visualizations:
+- name: Before vs after stabilize_membrane
+  address: local:DiagnosisMembraneFix
+  chart: viz/diagnosis_membrane_fix.html
+  description: Biomass and viability clear their acceptance thresholds (≥ 3.0 and ≥ 0.5) only after the stabilize_membrane fix.
 findings:
 - id: F-01
   kind: biological

@@ -75,7 +75,11 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (compo
   covers the required capabilities; the module ran for real (ran t=3.0; 3 bodies).
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
-visualizations: []
+visualizations:
+- name: Sourcing Audit Report Card
+  address: local:GrowthAndPushSourcingAudit
+  chart: viz/growth_and_push_sourcing_audit.html
+  description: Report card of the four sourcing-audit axes (all within_tol) for the compose growth-proc + viva-munk decision, gate PASS.
 findings:
 - id: F-01
   kind: computational

@@ -57,8 +57,8 @@ if _env and Path(_env).is_dir():
     REPO = Path(_env)
 if REPO is None:
     REPO = _find_repo_root(Path.cwd().resolve())
-if REPO is None and Path('/Users/eranagmon/code/viva-casebook--complete-findings').is_dir():
-    REPO = Path('/Users/eranagmon/code/viva-casebook--complete-findings')
+if REPO is None and Path('/Users/eranagmon/code/viva-casebook--study-visualizations').is_dir():
+    REPO = Path('/Users/eranagmon/code/viva-casebook--study-visualizations')
 if REPO is None:
     REPO = Path.cwd()
 sys.path.insert(0, str(REPO))
@@ -175,6 +175,23 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Bounded growth vs the thermal viability cliff**
+
+def _save_viz(study, slug, html):
+    d = REPO / 'docs/dashboard/investigation-notebooks/figures' / study
+    d.mkdir(parents=True, exist_ok=True)
+    out = d / (slug + '.html')
+    out.write_text(html, encoding='utf-8')
+    print('  wrote', out)
+
+
+# Bounded growth vs the thermal viability cliff
+_save_viz('bounded-cell', 'Bounded_growth_vs_the_thermal_viability_cliff', _render_one('local:BoundedCellGrowth', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -218,6 +235,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Diauxic shift (glucose → lactose)**
+
+# Diauxic shift (glucose → lactose)
+_save_viz('diauxie', 'Diauxic_shift_glucose_lactose', _render_one('local:DiauxicShift', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -259,6 +285,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Differentiation gradient**
+
+# Differentiation gradient
+_save_viz('multicellular', 'Differentiation_gradient', _render_one('local:DifferentiationGradient', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -298,6 +333,15 @@ STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **A→B→C trajectories**
+
+# A→B→C trajectories
+_save_viz('sbml', 'A_B_C_trajectories', _render_one('local:PathwayTrajectories', {}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -341,6 +385,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Flux-to-field gradient**
+
+# Flux-to-field gradient
+_save_viz('multiscale', 'Flux-to-field_gradient', _render_one('local:FluxFieldGradient', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -382,6 +435,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Before vs after stabilize_membrane**
+
+# Before vs after stabilize_membrane
+_save_viz('diagnosis', 'Before_vs_after_stabilize_membrane', _render_one('local:DiagnosisMembraneFix', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -420,6 +482,15 @@ STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **State separation — agent vs policy**
+
+# State separation — agent vs policy
+_save_viz('bistable', 'State_separation_agent_vs_policy', _render_one('local:BistableBasins', {}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #

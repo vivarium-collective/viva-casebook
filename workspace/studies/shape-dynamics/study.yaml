@@ -72,7 +72,11 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse
   from 36)).
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
-visualizations: []
+visualizations:
+- name: Shape relaxation toward target volume
+  address: local:ShapeRelaxation
+  chart: viz/shape_relaxation.html
+  description: Two cells relax from a 36px seed toward target volume 80 (settled [69, 72]) — reuse viva-cpm demonstrated by a real run.
 followup_proposals:
 - id: wire-viva-cpm-composite
   title: Run the viva-cpm CPM composite end-to-end
