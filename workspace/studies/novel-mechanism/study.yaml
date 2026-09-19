@@ -68,7 +68,11 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (build
   the required capabilities; the decision is audited (real run is a follow-up).
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
-visualizations: []
+visualizations:
+- name: Sourcing audit report-card (build-new)
+  address: local:SourcingAuditNovel
+  chart: viz/sourcing_audit_novel.html
+  description: All four audit axes within_tol — decision build-new graded PASS because no catalogued module covers [quantum_signal, exotic_transport].
 findings:
 - id: F-01
   kind: computational

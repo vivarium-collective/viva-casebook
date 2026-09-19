@@ -84,6 +84,11 @@ conclusion: '## Final model
 
   DONE in 4 edits (LLM agent) — a real process-bigraph composite, integrity clean. The deterministic policy
   also solved it in 5.'
+visualizations:
+- name: Bounded growth vs the thermal viability cliff
+  address: local:BoundedCellGrowth
+  chart: viz/bounded_cell_growth.html
+  description: Biomass saturates (Monod) while viability collapses at the t_tol=43 °C thermal-death threshold.
 findings:
 - id: F-01
   kind: biological

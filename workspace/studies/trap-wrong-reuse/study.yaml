@@ -70,7 +70,11 @@ conclusion: The sourcing audit graded this task **FAIL**. The chosen module does
   are locked.
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
-visualizations: []
+visualizations:
+- name: Sourcing audit caught the trap
+  address: local:SourcingAuditTrap
+  chart: viz/sourcing_audit_trap.html
+  description: source_fit grades mismatch (red) — the audit rejects reuse viva-munk for lacking `spatial` before the tests lock; gate FAIL by design.
 findings:
 - id: F-01
   kind: computational

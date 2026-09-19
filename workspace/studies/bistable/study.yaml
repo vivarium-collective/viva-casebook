@@ -54,6 +54,13 @@ conclusion: '## Final model
   n≥2) and added it, opening two basins (state separation 3.46). The deterministic policy tuned expression
   (a knob), stayed monostable (separation 0), and gave up: bistability is a structural property no single
   knob tunes into being. See docs/bistable-agent-vs-policy.html.'
+visualizations:
+- name: State separation — agent vs policy
+  address: local:BistableBasins
+  chart: viz/bistable_basins.html
+  description: Settled-state separation per build strategy; a bar above 0 is a
+    genuinely bistable switch (agent 3.46), a bar at 0 is a monostable midpoint
+    (policy).
 findings:
 - id: F-01
   kind: biological

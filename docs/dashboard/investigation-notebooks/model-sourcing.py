@@ -59,8 +59,8 @@ if _env and Path(_env).is_dir():
     REPO = Path(_env)
 if REPO is None:
     REPO = _find_repo_root(Path.cwd().resolve())
-if REPO is None and Path('/Users/eranagmon/code/viva-casebook--complete-findings').is_dir():
-    REPO = Path('/Users/eranagmon/code/viva-casebook--complete-findings')
+if REPO is None and Path('/Users/eranagmon/code/viva-casebook--study-visualizations').is_dir():
+    REPO = Path('/Users/eranagmon/code/viva-casebook--study-visualizations')
 if REPO is None:
     REPO = Path.cwd()
 sys.path.insert(0, str(REPO))
@@ -179,6 +179,23 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Sourcing Audit Report Card**
+
+def _save_viz(study, slug, html):
+    d = REPO / 'docs/dashboard/investigation-notebooks/figures' / study
+    d.mkdir(parents=True, exist_ok=True)
+    out = d / (slug + '.html')
+    out.write_text(html, encoding='utf-8')
+    print('  wrote', out)
+
+
+# Sourcing Audit Report Card
+_save_viz('cell-jostling', 'Sourcing_Audit_Report_Card', _render_one('local:CellJostlingSourcingAudit', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -221,6 +238,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Sourcing Audit Report Card**
+
+# Sourcing Audit Report Card
+_save_viz('growth-and-push', 'Sourcing_Audit_Report_Card', _render_one('local:GrowthAndPushSourcingAudit', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -261,6 +287,15 @@ STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Sourcing Audit Report Card**
+
+# Sourcing Audit Report Card
+_save_viz('spatial-competition', 'Sourcing_Audit_Report_Card', _render_one('local:SpatialCompetitionSourcingAudit', {}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -303,6 +338,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Shape relaxation toward target volume**
+
+# Shape relaxation toward target volume
+_save_viz('shape-dynamics', 'Shape_relaxation_toward_target_volume', _render_one('local:ShapeRelaxation', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -344,6 +388,15 @@ RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
 
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Sourcing audit report-card (build-new)**
+
+# Sourcing audit report-card (build-new)
+_save_viz('novel-mechanism', 'Sourcing_audit_report-card_build-new', _render_one('local:SourcingAuditNovel', {}, RUNS_DB, STUDY_YAML))
+
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
@@ -384,6 +437,15 @@ STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **Sourcing audit caught the trap**
+
+# Sourcing audit caught the trap
+_save_viz('trap-wrong-reuse', 'Sourcing_audit_caught_the_trap', _render_one('local:SourcingAuditTrap', {}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #

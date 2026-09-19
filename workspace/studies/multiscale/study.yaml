@@ -72,6 +72,11 @@ conclusion: '## Final model
   DONE (4/4) — the LLM agent recognised the two models were decoupled and AUTHORED a translator, reasoning
   the unit conversion (mol/time → mM/time over the compartment volume) needed to conserve mass. The deterministic
   policy GAVE UP at 1/4: ''author a translator'' is not an install it can express. See docs/multiscale-agent-vs-policy.html.'
+visualizations:
+- name: Flux-to-field gradient
+  address: local:FluxFieldGradient
+  chart: viz/flux_field_gradient.html
+  description: The agent-authored translator sources a 1-D diffusion gradient (mM) at the cell (mass conserved via ÷volume), versus the flat uncoupled field the policy left at 1/4.
 findings:
 - id: F-01
   kind: biological
