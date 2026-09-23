@@ -15,10 +15,10 @@ dependencies = [
   "viva-superpowers",
   # reused modules the model-sourcing investigation inherits into build_core.
   # Several resolve from the vivarium-collective ecosystem rather than PyPI;
-  # see README. viva-cpm ships as the `pbg-cpm` dist (imports as `cpm`).
+  # see README. the `viva-cpm` dist imports as the package `cpm`.
   "viva-munk",
   "spatio-flux",
-  "pbg-cpm",
+  "viva-cpm",
   "numpy",
   "pyyaml",
 ]

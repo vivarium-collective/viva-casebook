@@ -84,7 +84,7 @@ followup_proposals:
     Rust/maturin CPM composite needs its own core registration and lattice/energy parameters to execute.
     This follow-up makes the Cellular Potts shape dynamics actually run, so the reuse decision is demonstrated
     rather than only audited.'
-  hypothesized_mechanism: viva-cpm (dist pbg-cpm, imports as package `cpm`) builds via maturin and needs
+  hypothesized_mechanism: viva-cpm (dist viva-cpm, imports as package `cpm`) builds via maturin and needs
     a cpm-specific core + lattice/energy params, not the viva_munk core the other runnable tasks share.
   status: resolved
   seed:

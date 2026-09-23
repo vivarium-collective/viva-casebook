@@ -34,7 +34,7 @@ agent) + #2 (a test-authoring action) + ideally #3 (a real question), so it land
 
 The existing env was rebuilt enough to run the menu tasks (a `.venv` with the local
 ecosystem); **finishing it** (resolve the viva-munk↔spatio-flux type-version skew,
-restore `pbg-cpm` for the multicell/CPM tasks) is a shared prerequisite tracked under
+restore `viva-cpm` for the multicell/CPM tasks) is a shared prerequisite tracked under
 #1b Stage 0.
 
 ---
