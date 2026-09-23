@@ -79,7 +79,7 @@ def _inherit_spatio_flux(core, mod):
 
 
 def _inherit_cpm(core, mod):
-    # viva-cpm (dist pbg-cpm, import `cpm`) exposes no register hook and its
+    # viva-cpm (import `cpm`) exposes no register hook and its
     # Rust-backed CPMProcess is not auto-discovered, so register it explicitly.
     from cpm.processes.cpm_process import CPMProcess
     if "CPMProcess" not in core.link_registry:

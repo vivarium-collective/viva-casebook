@@ -83,7 +83,7 @@ against a single core, and it is the runtime meaning of a passing `source_fit` a
 ## Running
 
 The investigations depend on the framework (`viva-superpowers`) and the reused modules
-(`viva-munk`, `spatio-flux`, `pbg-cpm`), several of which resolve from the
+(`viva-munk`, `spatio-flux`, `viva-cpm`), several of which resolve from the
 vivarium-collective ecosystem rather than PyPI. With those installed:
 
 ```bash
