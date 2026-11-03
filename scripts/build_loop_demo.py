@@ -8,7 +8,7 @@ literature-grounded default knobs) or takes one calibration step on its knob.
 The iteration count, the mass-balance rejection of an under-specified model, the
 thermal-tolerance regression, and the recovery are all consequences of that
 policy — not a hand-authored list. Every verdict is computed by running the
-model version and grading it with `viva_superpowers.test_contract`.
+model version and grading it with `discovery_engine.test_contract`.
 
 Also captures: a two-round sufficiency audit (one-sided bands flagged → revised
 to two-sided → re-audit), an explicitly graded negative control, a GIVE_UP
