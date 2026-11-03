@@ -324,7 +324,7 @@ _save_viz('spatial-competition', 'Sourcing_Audit_Report_Card', _render_one('loca
 
 # **Composite `viva_casebook.composites.shape-dynamics`** — `spec_viva_casebook_composites_shape_dynamics` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_shape_dynamics = load_spec(REPO / 'viva_casebook/composites/shape-dynamics.composite.yaml')
 describe_spec(spec_viva_casebook_composites_shape_dynamics)
 
@@ -403,7 +403,7 @@ _save_viz('shape-dynamics', 'Shape_relaxation_toward_target_volume', _render_one
 
 # **Composite `viva_casebook.composites.novel-mechanism`** — `spec_viva_casebook_composites_novel_mechanism` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_novel_mechanism = load_spec(REPO / 'viva_casebook/composites/novel-mechanism.composite.yaml')
 describe_spec(spec_viva_casebook_composites_novel_mechanism)
 

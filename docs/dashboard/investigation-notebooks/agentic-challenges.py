@@ -161,7 +161,7 @@ def _render_one(address, config, runs_db, study_yaml):
 
 # **Composite `viva_casebook.composites.bounded-cell`** — `spec_viva_casebook_composites_bounded_cell` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_bounded_cell = load_spec(REPO / 'viva_casebook/composites/bounded-cell.composite.yaml')
 describe_spec(spec_viva_casebook_composites_bounded_cell)
 
@@ -247,7 +247,7 @@ _save_viz('bounded-cell', 'Bounded_growth_vs_the_thermal_viability_cliff', _rend
 
 # **Composite `viva_casebook.composites.diauxie`** — `spec_viva_casebook_composites_diauxie` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_diauxie = load_spec(REPO / 'viva_casebook/composites/diauxie.composite.yaml')
 describe_spec(spec_viva_casebook_composites_diauxie)
 
@@ -320,7 +320,7 @@ _save_viz('diauxie', 'Diauxic_shift_glucose_lactose', _render_one('local:Diauxic
 
 # **Composite `viva_casebook.composites.multicellular`** — `spec_viva_casebook_composites_multicellular` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_multicellular = load_spec(REPO / 'viva_casebook/composites/multicellular.composite.yaml')
 describe_spec(spec_viva_casebook_composites_multicellular)
 
@@ -448,7 +448,7 @@ _save_viz('multicellular', 'Differentiation_gradient', _render_one('local:Differ
 
 # **Composite `viva_casebook.composites.sbml`** — `spec_viva_casebook_composites_sbml` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_sbml = load_spec(REPO / 'viva_casebook/composites/sbml.composite.yaml')
 describe_spec(spec_viva_casebook_composites_sbml)
 
@@ -505,7 +505,7 @@ _save_viz('sbml', 'A_B_C_trajectories', _render_one('local:PathwayTrajectories',
 
 # **Composite `viva_casebook.composites.multiscale`** — `spec_viva_casebook_composites_multiscale` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_multiscale = load_spec(REPO / 'viva_casebook/composites/multiscale.composite.yaml')
 describe_spec(spec_viva_casebook_composites_multiscale)
 
@@ -579,7 +579,7 @@ _save_viz('multiscale', 'Flux-to-field_gradient', _render_one('local:FluxFieldGr
 
 # **Composite `viva_casebook.composites.diagnosis`** — `spec_viva_casebook_composites_diagnosis` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_diagnosis = load_spec(REPO / 'viva_casebook/composites/diagnosis.composite.yaml')
 describe_spec(spec_viva_casebook_composites_diagnosis)
 
@@ -639,7 +639,7 @@ _save_viz('diagnosis', 'Before_vs_after_stabilize_membrane', _render_one('local:
 
 # **Composite `viva_casebook.composites.bistable`** — `spec_viva_casebook_composites_bistable` (a plain, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_viva_casebook_composites_bistable = load_spec(REPO / 'viva_casebook/composites/bistable.composite.yaml')
 describe_spec(spec_viva_casebook_composites_bistable)
 

@@ -9,6 +9,7 @@ description = "A casebook of capability-testing investigations for the vivarium 
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "viva-discovery-engine>=0.1,<0.2",
   "process-bigraph",
   # the model-building framework (loop_state, module_sourcing, test_audit,
   # benchmark) the investigations exercise:
